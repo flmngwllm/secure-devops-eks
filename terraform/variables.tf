@@ -6,16 +6,18 @@ variable "REGION" {
 
 variable "public_subnets" {
     description = "Map of public subnets"
+    type = map(number)
     default = {
-        "public_subnet_1" = 1
-        "public_subnet_2" = 2
+        "us-east-1a" = 1
+        "us-east-1b" = 2
     }
 }
 
 variable "private_subnets" {
     description = "Map of public subnets"
+    type = map(number)
     default = {
-        "private_subnet_1" = 1
-        "private_subnet_2" = 2
+        "us-east-1a" = 3
+        "us-east-1b" = 4
     }
 }
