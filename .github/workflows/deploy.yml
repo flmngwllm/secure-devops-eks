@@ -15,6 +15,12 @@ on:
     types:
       - completed
   workflow_dispatch:
+
+env:
+    ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
+    ECR_REPOSITORY: secure-app
+    ECR_IMAGE_TAG: ${{ github.sha || 'latest'}}
+    
 jobs:
   deploy-app:
     runs-on: ubuntu-latest
@@ -41,10 +47,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
       
       - name: Build Docker image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
-          ECR_REPOSITORY: secure-app
-          ECR_IMAGE_TAG: ${{ github.sha || 'latest'}}
+        
         run: |
           echo "Building Docker image"
           docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG" ./testapp
