@@ -46,7 +46,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -no-color -out=tfplan -input=false      
+        run: terraform plan -no-color -out=tfplan -input=false -var="allowed_ip=${{ secrets.ALLOWED_IP }}"     
 
       - name: Terraform Apply
         if: github.event_name != 'pull_request'
