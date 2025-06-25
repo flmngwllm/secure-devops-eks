@@ -21,3 +21,8 @@ variable "private_subnets" {
     "us-east-1b" = 4
   }
 }
+
+variable "allowed_ip" {
+  description = "Public IP allowed to access EKS cluster"
+  type        = string
+}
