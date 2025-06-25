@@ -47,7 +47,7 @@ jobs:
           ECR_IMAGE_TAG: ${{ github.sha || 'latest'}}
         run: |
           echo "Building Docker image"
-          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG" ./app
+          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG" ./testapp
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG"
           echo "Docker image: $ECR_IMAGE_TAG pushed to ECR"
           echo "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG"
