@@ -1,0 +1,92 @@
+name: Deploy App with Helm + EKS
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+  workflow_run:
+    workflows: [Terraform Infrastructure"]
+    types:
+      - completed
+  workflow_dispatch:
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: us-east-1
+
+      - name: tfsec action
+        uses: aquasecurity/tfsec-action@v1.0.3
+       
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      - name: Build Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
+          ECR_REPOSITORY: secure-app
+          ECR_IMAGE_TAG: ${{ github.sha || 'latest'}}
+        run: |
+          echo "Building Docker image"
+          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG" ./app
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG"
+          echo "Docker image: $ECR_IMAGE_TAG pushed to ECR"
+          echo "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG"
+
+      - name: Scan Docker image
+        uses: aquasecurity/trivy-action@master
+        with:
+            image-ref: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.ECR_IMAGE_TAG }}
+
+      - name: Kubernetes kubeconfig
+        if: github.event_name != 'pull_request'
+        run: |
+          aws eks --region us-east-1 update-kubeconfig --name secure_cluster
+          kubectl get nodes 
+
+      - name: Install helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      
+      - name: Deploy to EKS 
+        run: |
+          helm upgrade --install my-app ./myapp-helm-chart --namespace default 
+
+      - name: Verify deployment
+        run: |
+          echo "Verifying deployment"
+          kubectl get pods --namespace default
+          kubectl get svc   
+          kubectl get deployments
+          kubectl get nodes
+        
+      - name: Running kube-bench
+        run: |
+            echo "Running kube-bench"
+            curl -LJO http:https://github.com/aquasecurity/kube-bench/releases/download/v0.6.18/kube-bench_0.6.18_linux_amd64.tar.gz
+            tar -xvf kube-bench_0.6.18_linux_amd64.tar.gz
+            chmod +x kube-bench
+            ./kube-bench --version
+            ./kube-bench --benchmark eks 
+         
+      
+
+      
