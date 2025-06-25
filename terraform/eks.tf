@@ -24,7 +24,7 @@ resource "aws_eks_cluster" "secure_cluster" {
     aws_iam_role_policy_attachment.secure_devops_cluster_AmazonEKSClusterPolicy,
   ]
 
-  enabled_cluster_log_types = ["api","audit","authenticator","controllerManager","scheduler"]
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
 
@@ -33,8 +33,8 @@ resource "aws_eks_node_group" "secure_devops_node_group" {
   cluster_name    = aws_eks_cluster.secure_cluster.name
   node_group_name = "secure_devops_node_group"
   node_role_arn   = aws_iam_role.secure_devops_node_group_role.arn
-  subnet_ids      = [aws_subnet.private_secure_devops_subnet["us-east-1a"].id,
-      aws_subnet.private_secure_devops_subnet["us-east-1b"].id]
+  subnet_ids = [aws_subnet.private_secure_devops_subnet["us-east-1a"].id,
+  aws_subnet.private_secure_devops_subnet["us-east-1b"].id]
 
   scaling_config {
     desired_size = 1

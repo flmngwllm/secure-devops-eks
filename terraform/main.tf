@@ -1,11 +1,11 @@
 terraform {
-    required_providers {
-        aws = {
-            source = "hashicorp/aws"
-            version = "~> 5.0"
-        }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
-    backend "s3" {
+  }
+  backend "s3" {
     bucket         = "secure-devops-terraform-state"
     key            = "secure-devops/terraform.tfstate"
     region         = "us-east-1"
@@ -15,5 +15,5 @@ terraform {
 }
 
 provider "aws" {
-    region = var.REGION
+  region = var.REGION
 }
