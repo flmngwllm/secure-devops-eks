@@ -23,6 +23,8 @@ resource "aws_eks_cluster" "secure_cluster" {
   depends_on = [
     aws_iam_role_policy_attachment.secure_devops_cluster_AmazonEKSClusterPolicy,
   ]
+
+  enabled_cluster_log_types = ["api","audit","authenticator","controllerManager","scheduler"]
 }
 
 
