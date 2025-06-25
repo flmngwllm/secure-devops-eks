@@ -46,11 +46,11 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -no-color -out=tfplan -input=false -var="allowed_ip=${{ secrets.ALLOWED_IP }}"     
+        run: terraform plan -no-color -out=tfplan -input=false -var='public_access_cidrs=["0.0.0.0/0"]'     
 
       - name: Terraform Apply
         if: github.event_name != 'pull_request'
-        run: terraform apply -auto-approve -input=false -var="allowed_ip=${{ secrets.ALLOWED_IP }}"
+        run: terraform apply -auto-approve -input=false -var='public_access_cidrs=["0.0.0.0/0"]'
 
       - name: Github SHA
         if: github.event_name != 'pull_request'

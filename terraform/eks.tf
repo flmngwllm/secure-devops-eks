@@ -18,7 +18,7 @@ resource "aws_eks_cluster" "secure_cluster" {
     ]
 
     endpoint_public_access = true
-    public_access_cidrs    = ["${var.allowed_ip}/32"]
+    public_access_cidrs    = var.public_access_cidrs
   }
 
   # Ensure that IAM Role permissions are created before and deleted

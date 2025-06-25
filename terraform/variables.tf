@@ -22,7 +22,7 @@ variable "private_subnets" {
   }
 }
 
-variable "allowed_ip" {
-  description = "Public IP allowed to access EKS cluster"
-  type        = string
+variable "public_access_cidrs" {
+  type        = list(string)
+  description = "List of CIDR blocks allowed to access the EKS public endpoint"
 }
