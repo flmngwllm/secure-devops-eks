@@ -17,6 +17,7 @@ resource "aws_iam_role" "secure_devops_eks_cluster_role" {
   })
 }
 
+
 resource "aws_iam_role_policy_attachment" "secure_devops_cluster_AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.secure_devops_eks_cluster_role.name
