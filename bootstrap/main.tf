@@ -6,9 +6,9 @@ resource "aws_s3_bucket" "terraform_state" {
   bucket = "secure-devops-terraform-state"
 
   tags = {
-  Project = "SecureDevOps"
-  Purpose = "Terraform State Storage"
-}
+    Project = "SecureDevOps"
+    Purpose = "Terraform State Storage"
+  }
 
 }
 
