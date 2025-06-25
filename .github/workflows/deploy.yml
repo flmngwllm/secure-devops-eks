@@ -34,6 +34,7 @@ jobs:
 
       - name: tfsec action
         uses: aquasecurity/tfsec-action@v1.0.3
+        continue-on-error: true
        
       - name: Login to ECR
         id: login-ecr

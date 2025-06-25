@@ -5,6 +5,7 @@
 terraform.tfstate
 terraform.tfstate.backup
 crash.log
+terraform.tfvars
 
 # OS and editor files
 .DS_Store

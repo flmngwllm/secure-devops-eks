@@ -1,8 +1,9 @@
 resource "aws_eks_cluster" "secure_cluster" {
   name = "secure_cluster"
-
+  
   access_config {
     authentication_mode = "API"
+    
   }
 
   role_arn = aws_iam_role.secure_devops_eks_cluster_role.arn
@@ -15,6 +16,9 @@ resource "aws_eks_cluster" "secure_cluster" {
       aws_subnet.private_secure_devops_subnet["us-east-1a"].id,
       aws_subnet.private_secure_devops_subnet["us-east-1b"].id,
     ]
+    
+    endpoint_public_access = true
+    public_access_cidrs    = ["${var.allowed_ip}/32"] 
   }
 
   # Ensure that IAM Role permissions are created before and deleted
@@ -25,6 +29,8 @@ resource "aws_eks_cluster" "secure_cluster" {
   ]
 
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
+  
 }
 
 
