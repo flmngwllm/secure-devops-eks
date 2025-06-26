@@ -16,8 +16,8 @@ resource "aws_iam_role" "secure_devops_eks_cluster_role" {
     ]
   })
   tags = {
-  Name = "secure_devops_eks_cluster_role"
-}
+    Name = "secure_devops_eks_cluster_role"
+  }
 }
 
 
@@ -41,9 +41,9 @@ resource "aws_iam_role" "secure_devops_node_group_role" {
     Version = "2012-10-17"
   })
 
-    tags = {
-        Name = "secure_devops_node_group_role"
-    }
+  tags = {
+    Name = "secure_devops_node_group_role"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "secure_nodes_AmazonEKSWorkerNodePolicy" {

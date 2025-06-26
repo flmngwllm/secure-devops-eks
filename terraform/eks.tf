@@ -53,9 +53,9 @@ resource "aws_eks_node_group" "secure_devops_node_group" {
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
   depends_on = [
-    aws_iam_role_policy_attachment.secure_nodes-AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.secure_nodes-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.secure_nodes-AmazonEC2ContainerRegistryReadOnly
+    aws_iam_role_policy_attachment.secure_nodes_AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.secure_nodes_AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.secure_nodes_AmazonEC2ContainerRegistryReadOnly
   ]
 
 }
