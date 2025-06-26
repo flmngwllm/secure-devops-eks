@@ -55,9 +55,7 @@ resource "aws_eks_node_group" "secure_devops_node_group" {
   depends_on = [
     aws_iam_role_policy_attachment.secure_nodes-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.secure_nodes-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.secure_nodes-AmazonEC2ContainerRegistryReadOnly,
-    kubernetes_config_map.aws_auth
-
+    aws_iam_role_policy_attachment.secure_nodes-AmazonEC2ContainerRegistryReadOnly
   ]
 
 }

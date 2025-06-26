@@ -15,6 +15,7 @@ resource "aws_subnet" "public_secure_devops_subnet" {
   tags = {
     Name                     = "public-${each.key}"
     "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/cluster/secure_cluster" = "owned"
   }
 }
 
@@ -27,6 +28,7 @@ resource "aws_subnet" "private_secure_devops_subnet" {
   tags = {
     Name                              = "private-${each.key}"
     "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/secure_cluster" = "owned"
   }
 }
 
