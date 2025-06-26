@@ -14,6 +14,8 @@ on:
 
 env: 
   TF_WORKING_DIR: ./terraform
+  PUBLIC_ACCESS_CIDRS: '["73.122.229.85/32"]'
+  GITHUB_ACTIONS_ROLE_ARN: ${{ secrets.ACTIONS_ROLE_ARN }}
 
 permissions:
   id-token: write
@@ -49,11 +51,15 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -no-color -out=tfplan -input=false  
+        run: terraform plan -no-color -out=tfplan -input=false \
+            -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
+            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}"
 
       - name: Terraform Apply
         if: github.event_name != 'pull_request'
-        run: terraform apply -auto-approve -input=false 
+        run: terraform apply -auto-approve -input=false \
+            -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
+            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" 
 
       - name: Github SHA
         if: github.event_name != 'pull_request'

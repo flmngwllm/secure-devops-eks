@@ -30,7 +30,6 @@ resource "aws_eks_cluster" "secure_cluster" {
 
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
-
 }
 
 
