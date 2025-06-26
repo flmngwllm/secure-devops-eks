@@ -56,6 +56,8 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "eks:DescribeUpdate",
           "eks:CreateCluster",
           "eks:CreateNodegroup",
+          "eks:DeleteCluster",
+          "eks:DeleteNodegroup",
         ],
         Effect   = "Allow",
         Resource = "*"
