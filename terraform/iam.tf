@@ -54,3 +54,4 @@ resource "aws_iam_role_policy_attachment" "secure_nodes-AmazonEC2ContainerRegist
   role       = aws_iam_role.secure_devops_node_group_role.name
 }
 
+
