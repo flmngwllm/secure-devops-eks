@@ -11,10 +11,15 @@ on:
     paths:
       - 'terraform/**'
   workflow_run:
-    workflows: [Terraform Infrastructure"]
+    workflows: ["Terraform Infrastructure"]
     types:
       - completed
   workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy-app:
     runs-on: ubuntu-latest
@@ -28,8 +33,7 @@ jobs:
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          role-to-assume: arn:aws:iam::831274730062:role/github-actions-role
           aws-region: us-east-1
 
       - name: tfsec action
@@ -69,7 +73,7 @@ jobs:
       
       - name: Deploy to EKS 
         run: |
-          helm upgrade --install my-app ./myapp-helm-chart --namespace default 
+          helm upgrade --install secure-app ./myapp-helm-chart --namespace default 
 
       - name: Verify deployment
         run: |

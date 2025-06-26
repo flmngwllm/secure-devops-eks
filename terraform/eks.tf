@@ -16,7 +16,7 @@ resource "aws_eks_cluster" "secure_cluster" {
       aws_subnet.private_secure_devops_subnet["us-east-1a"].id,
       aws_subnet.private_secure_devops_subnet["us-east-1b"].id,
     ]
-
+    endpoint_private_access = true
     endpoint_public_access = true
     public_access_cidrs    = var.public_access_cidrs
   }
