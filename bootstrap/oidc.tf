@@ -1,18 +1,21 @@
-# resource "aws_iam_openid_connect_provider" "github" {
-#   url = "https://token.actions.githubusercontent.com"
-
-#   client_id_list = [
-#     "sts.amazonaws.com"
-#   ]
-
-#   thumbprint_list = [
-#     "6938fd4d98bab03faadb97b34396831e3780aea1"
-#   ]
-# }
-
-data "aws_iam_openid_connect_provider" "github" {
+resource "aws_iam_openid_connect_provider" "github" {
   url = "https://token.actions.githubusercontent.com"
+
+  client_id_list = [
+    "sts.amazonaws.com"
+  ]
+
+  thumbprint_list = [
+    "6938fd4d98bab03faadb97b34396831e3780aea1"
+  ]
+#   lifecycle {
+#     prevent_destroy = true
+#   }
 }
+
+# data "aws_iam_openid_connect_provider" "github" {
+#   url = "https://token.actions.githubusercontent.com"
+# }
 resource "aws_iam_role" "github_actions" {
   name = "github-actions-role"
 
@@ -22,13 +25,16 @@ resource "aws_iam_role" "github_actions" {
       {
         Effect = "Allow",
         Principal = {
-          Federated = data.aws_iam_openid_connect_provider.github.arn
+          Federated = "arn:aws:iam::${var.account_id}:oidc-provider/token.actions.githubusercontent.com"
         },
         Action = "sts:AssumeRoleWithWebIdentity",
         Condition = {
           StringLike = {
             "token.actions.githubusercontent.com:sub" = "repo:flmngwllm/secure-devops-eks:*"
-          }
+          },
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+        }
         }
       }
     ]
@@ -45,7 +51,9 @@ resource "aws_iam_role_policy" "github_actions_policy" {
       {
         Action = [
           "eks:DescribeCluster",
-          "eks:DescribeNodegroup"
+          "eks:DescribeNodegroup",
+          "eks:UpdateClusterConfig",
+          "eks:DescribeUpdate"
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -56,7 +64,9 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
           "ecr:BatchGetImage",
-          "ecr:PutImage"
+          "ecr:PutImage",
+          "ecr:DescribeRepositories",
+          "ecr:ListTagsForResource"
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -65,12 +75,14 @@ resource "aws_iam_role_policy" "github_actions_policy" {
         Action = [
           "s3:GetObject",
           "s3:PutObject",
-          "s3:ListBucket"
-        ],
-
-        
-        Effect   = "Allow",
-        Resource = "*"
+          "s3:ListBucket",
+          "s3:DeleteObject"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::secure-devops-terraform-state",
+          "arn:aws:s3:::secure-devops-terraform-state/*"
+        ]
       },
       {
         Action = [
@@ -81,8 +93,46 @@ resource "aws_iam_role_policy" "github_actions_policy" {
         ],
         Effect   = "Allow",
         Resource = "arn:aws:dynamodb:us-east-1:831274730062:table/secure-devops-terraform-locks"
+      },
+      {
+        Action = [
+          "ec2:DescribeVpcs",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeRouteTables",
+          "ec2:DescribeInternetGateways",
+          "ec2:DescribeVpcAttribute",
+          "ec2:DescribeAddresses",
+          "ec2:DescribeAddressesAttribute",
+          "ec2:DescribeNatGateways"
+        ],
+        Effect   = "Allow",
+        Resource = "*"
+      },
+      {
+        Action = [
+          "iam:GetRole",
+          "iam:GetRolePolicy",
+          "iam:GetOpenIDConnectProvider",
+          "iam:ListRolePolicies",
+          "iam:ListAttachedRolePolicies",
+          "iam:ListInstanceProfilesForRole",
+          "iam:DeleteRole",
+          "iam:DeleteOpenIDConnectProvider"
+        ],
+        Effect   = "Allow",
+        Resource = "*"
+      },
+      {
+        Action = [
+          "iam:AttachRolePolicy",
+          "iam:PutRolePolicy",
+          "iam:DeleteRolePolicy"
+        ],
+        Effect   = "Allow",
+        Resource = "*"
       }
-      
+
     ]
   })
 }
