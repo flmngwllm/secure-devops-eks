@@ -9,7 +9,7 @@ resource "kubernetes_config_map" "aws_auth" {
       {
         rolearn  = aws_iam_role.secure_devops_node_group_role.arn
         username = "system:node:{{EC2PrivateDNSName}}"
-        groups   = [
+        groups = [
           "system:bootstrappers",
           "system:nodes"
         ]
