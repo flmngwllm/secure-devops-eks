@@ -3,7 +3,11 @@ resource "kubernetes_config_map" "aws_auth" {
     name      = "aws-auth"
     namespace = "kube-system"
   }
-
+  
+  depends_on = [
+  aws_eks_cluster.secure_cluster,
+  aws_eks_node_group.secure_devops_node_group,
+]
   data = {
     mapRoles = yamlencode([
       {
@@ -15,7 +19,7 @@ resource "kubernetes_config_map" "aws_auth" {
         ]
       },
       {
-        rolearn  = aws_iam_role.github_actions.arn
+        rolearn  = var.github_actions_role_arn
         username = "github-actions"
         groups   = ["system:masters"]
       }
@@ -23,14 +27,3 @@ resource "kubernetes_config_map" "aws_auth" {
   }
 }
 
-resource "aws_iam_openid_connect_provider" "github" {
-  url = "https://token.actions.githubusercontent.com"
-
-  client_id_list = [
-    "sts.amazonaws.com"
-  ]
-
-  thumbprint_list = [
-    "6938fd4d98bab03faadb97b34396831e3780aea1"
-  ]
-}
