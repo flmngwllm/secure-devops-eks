@@ -22,7 +22,7 @@ permissions:
   contents: read
 
 jobs:
-  terraform-core:
+  terraform:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,14 +53,6 @@ jobs:
       - name: Terraform Plan
         run: |
           terraform plan -no-color -out=tfplan -input=false \
-            -target=aws_eks_cluster.secure_cluster \
-            -target=aws_vpc.secure_devops_vpc \
-            -target=aws_subnet.public_secure_devops_subnet \
-            -target=aws_subnet.private_secure_devops_subnet \
-            -target=aws_iam_role.secure_devops_eks_cluster_role \
-            -target=aws_iam_role.secure_devops_node_group_role \
-            -target=aws_internet_gateway.secure_devops_gw \
-            -target=aws_nat_gateway.secure_devops_nat \
             -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" || exit 1
 
@@ -68,61 +60,6 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           terraform apply -auto-approve -input=false \
-            -target=aws_eks_cluster.secure_cluster \
-            -target=aws_vpc.secure_devops_vpc \
-            -target=aws_subnet.public_secure_devops_subnet \
-            -target=aws_subnet.private_secure_devops_subnet \
-            -target=aws_iam_role.secure_devops_eks_cluster_role \
-            -target=aws_iam_role.secure_devops_node_group_role \
-            -target=aws_internet_gateway.secure_devops_gw \
-            -target=aws_nat_gateway.secure_devops_nat \
-            -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
-            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" || exit 1
-
-  terraform-complete:
-    name: Terraform Finish Infra (Node Group, aws-auth)
-    needs: terraform-core
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: ${{ env.TF_WORKING_DIR }}
-    steps:  
-      - name: Checkout source code
-        uses: actions/checkout@v4
-      
-      - name: Setup terraform
-        uses: hashicorp/setup-terraform@v3
-      
-      - name: AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.ACTIONS_ROLE_ARN }}
-          aws-region: us-east-1
-      
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Format
-        run: terraform fmt -check
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: Terraform Plan
-        run: |
-          terraform plan -no-color -out=tfplan -input=false \
-            -target=aws_eks_node_group.secure_devops_node_group \
-            -target=kubernetes_config_map.aws_auth \
-            -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
-            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" || exit 1
-
-      - name: Terraform Apply
-        if: github.event_name != 'pull_request'
-        run: |
-          terraform apply -auto-approve -input=false \
-            -target=aws_eks_node_group.secure_devops_node_group \
-            -target=kubernetes_config_map.aws_auth \
             -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" || exit 1
 

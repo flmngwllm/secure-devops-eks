@@ -40,7 +40,6 @@ resource "aws_eks_node_group" "secure_devops_node_group" {
   node_role_arn   = aws_iam_role.secure_devops_node_group_role.arn
   subnet_ids = [aws_subnet.private_secure_devops_subnet["us-east-1a"].id,
   aws_subnet.private_secure_devops_subnet["us-east-1b"].id]
-
   scaling_config {
     desired_size = 1
     max_size     = 2
@@ -57,5 +56,8 @@ resource "aws_eks_node_group" "secure_devops_node_group" {
     aws_iam_role_policy_attachment.secure_nodes-AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.secure_nodes-AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.secure_nodes-AmazonEC2ContainerRegistryReadOnly,
+    kubernetes_config_map.aws_auth
+
   ]
+  
 }

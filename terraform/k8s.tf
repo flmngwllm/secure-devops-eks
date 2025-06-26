@@ -6,7 +6,6 @@ resource "kubernetes_config_map" "aws_auth" {
 
   depends_on = [
     aws_eks_cluster.secure_cluster,
-    aws_eks_node_group.secure_devops_node_group,
   ]
   data = {
     mapRoles = yamlencode([
