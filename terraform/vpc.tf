@@ -13,8 +13,8 @@ resource "aws_subnet" "public_secure_devops_subnet" {
   cidr_block        = cidrsubnet(aws_vpc.secure_devops_vpc.cidr_block, 8, each.value)
   availability_zone = each.key
   tags = {
-    Name                     = "public-${each.key}"
-    "kubernetes.io/role/elb" = "1"
+    Name                                   = "public-${each.key}"
+    "kubernetes.io/role/elb"               = "1"
     "kubernetes.io/cluster/secure_cluster" = "owned"
   }
 }
@@ -26,8 +26,8 @@ resource "aws_subnet" "private_secure_devops_subnet" {
   availability_zone = each.key
 
   tags = {
-    Name                              = "private-${each.key}"
-    "kubernetes.io/role/internal-elb" = "1"
+    Name                                   = "private-${each.key}"
+    "kubernetes.io/role/internal-elb"      = "1"
     "kubernetes.io/cluster/secure_cluster" = "owned"
   }
 }
