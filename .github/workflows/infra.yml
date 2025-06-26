@@ -25,7 +25,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ${{ env.TF_WORKING_DIR}}
+        working-directory: ${{ env.TF_WORKING_DIR }}
     steps:  
       - name: Checkout source code
         uses: actions/checkout@v4
