@@ -54,14 +54,14 @@ jobs:
         run: |
           terraform plan -no-color -out=tfplan -input=false \
             -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
-            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}"
+            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" || exit 1
 
       - name: Terraform Apply
         if: github.event_name != 'pull_request'
         run: |
           terraform apply -auto-approve -input=false \
             -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
-            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" 
+            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" || exit 1
 
       - name: Github SHA
         if: github.event_name != 'pull_request'

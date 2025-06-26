@@ -53,7 +53,9 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "eks:DescribeCluster",
           "eks:DescribeNodegroup",
           "eks:UpdateClusterConfig",
-          "eks:DescribeUpdate"
+          "eks:DescribeUpdate",
+          "eks:CreateCluster",
+          "eks:CreateNodegroup",
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -66,7 +68,10 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "ecr:BatchGetImage",
           "ecr:PutImage",
           "ecr:DescribeRepositories",
-          "ecr:ListTagsForResource"
+          "ecr:ListTagsForResource",
+          "ecr:CreateRepository",
+          "ecr:TagResource",
+          "ec2:CreateTags"
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -104,7 +109,19 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "ec2:DescribeVpcAttribute",
           "ec2:DescribeAddresses",
           "ec2:DescribeAddressesAttribute",
-          "ec2:DescribeNatGateways"
+          "ec2:DescribeNatGateways",
+          "ec2:CreateVpc",
+          "ec2:CreateSubnet",
+          "ec2:CreateInternetGateway",
+          "ec2:CreateRouteTable",
+          "ec2:CreateRoute",
+          "ec2:CreateSecurityGroup",
+          "ec2:CreateNatGateway",
+          "ec2:AttachInternetGateway",
+          "ec2:DeleteInternetGateway",
+          "ec2:AllocateAddress",
+          "ec2:AssociateRouteTable"
+          
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -118,7 +135,9 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "iam:ListAttachedRolePolicies",
           "iam:ListInstanceProfilesForRole",
           "iam:DeleteRole",
-          "iam:DeleteOpenIDConnectProvider"
+          "iam:DeleteOpenIDConnectProvider",
+          "iam:CreateRole",
+          "iam:PassRole"
         ],
         Effect   = "Allow",
         Resource = "*"
