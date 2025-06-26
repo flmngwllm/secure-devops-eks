@@ -25,9 +25,9 @@ provider "kubernetes" {
 }
 
 data "aws_eks_cluster" "secure_cluster" {
-  name = aws_eks_cluster.secure_cluster.name
+  name = "secure_cluster"
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = aws_eks_cluster.secure_cluster.name
+  name = "secure_cluster"
 }
