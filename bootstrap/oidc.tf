@@ -139,7 +139,9 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "iam:DeleteRole",
           "iam:DeleteOpenIDConnectProvider",
           "iam:CreateRole",
-          "iam:PassRole"
+          "iam:PassRole",
+          "iam:TagRole",
+          "iam:CreateServiceLinkedRole"
         ],
         Effect   = "Allow",
         Resource = "*"

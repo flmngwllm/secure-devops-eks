@@ -54,7 +54,6 @@ jobs:
         run: |
           terraform plan -no-color -out=tfplan -input=false \
             -target=aws_eks_cluster.secure_cluster \
-            -target=aws_eks_node_group.secure_devops_node_group \
             -target=aws_vpc.secure_devops_vpc \
             -target=aws_subnet.public_secure_devops_subnet \
             -target=aws_subnet.private_secure_devops_subnet \
@@ -69,8 +68,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           terraform apply -auto-approve -input=false \
-            -target=aws_eks_cluster.secure_cluster \
-            -target=aws_eks_node_group.secure_devops_node_group \
+            -target=aws_eks_cluster.secure_cluster \  
             -target=aws_vpc.secure_devops_vpc \
             -target=aws_subnet.public_secure_devops_subnet \
             -target=aws_subnet.private_secure_devops_subnet \
@@ -115,6 +113,7 @@ jobs:
         run: |
           terraform plan -no-color -out=tfplan -input=false \
             -target=kubernetes_config_map.aws_auth \
+            -target=aws_eks_node_group.secure_devops_node_group \
             -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" || exit 1
 
@@ -123,6 +122,7 @@ jobs:
         run: |
           terraform apply -auto-approve -input=false \
             -target=kubernetes_config_map.aws_auth \
+            -target=aws_eks_node_group.secure_devops_node_group \
             -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" || exit 1
 
