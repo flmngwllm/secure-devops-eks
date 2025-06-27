@@ -1,24 +1,10 @@
 resource "aws_eks_cluster" "secure_cluster" {
   name = "secure_cluster"
 
-  access_config {
+    access_config {
     authentication_mode = "API"
-  }
 
-  access_entries {
-    principal_arn = var.github_actions_role_arn
-    type          = "STANDARD"
-    username      = "github-actions"
-    groups        = ["system:masters"]
-  }
-
-  access_entries {
-    principal_arn = aws_iam_role.secure_devops_node_group_role.arn
-    type          = "STANDARD"
-    username      = "system:node:{{EC2PrivateDNSName}}"
-    groups        = ["system:bootstrappers", "system:nodes"]
-  }
-
+    }
   role_arn = aws_iam_role.secure_devops_eks_cluster_role.arn
   version  = "1.31"
 
@@ -72,3 +58,38 @@ resource "aws_eks_node_group" "secure_devops_node_group" {
   ]
 
 }
+
+resource "aws_eks_access_entry" "gha_access" {
+  cluster_name  = aws_eks_cluster.secure_cluster.name
+  principal_arn = var.github_actions_role_arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "gha_admin" {
+  cluster_name  = aws_eks_cluster.secure_cluster.name
+  principal_arn = var.github_actions_role_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [aws_eks_access_entry.gha_access]
+}
+
+resource "aws_eks_access_entry" "node_access" {
+  cluster_name  = aws_eks_cluster.secure_cluster.name
+  principal_arn = aws_iam_role.secure_devops_node_group_role.arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "node_access" {
+  cluster_name  = aws_eks_cluster.secure_cluster.name
+  principal_arn = aws_iam_role.secure_devops_node_group_role.arn
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNodePolicy"
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [aws_eks_access_entry.node_access]
+}
+
