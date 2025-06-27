@@ -1,7 +1,7 @@
 resource "aws_eks_cluster" "secure_cluster" {
   name = "secure_cluster"
 
-    access_config {
+  access_config {
     authentication_mode = "API"
 
     access_entries {
