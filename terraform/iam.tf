@@ -61,4 +61,9 @@ resource "aws_iam_role_policy_attachment" "secure_nodes_AmazonEC2ContainerRegist
   role       = aws_iam_role.secure_devops_node_group_role.name
 }
 
+resource "aws_iam_role_policy_attachment" "secure_nodes_AmazonEKSNodePolicy" {
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNodePolicy"
+  role       = aws_iam_role.secure_devops_node_group_role.name
+}
+
 

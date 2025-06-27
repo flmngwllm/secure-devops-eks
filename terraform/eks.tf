@@ -55,7 +55,8 @@ resource "aws_eks_node_group" "secure_devops_node_group" {
     aws_eks_cluster.secure_cluster,
     aws_iam_role_policy_attachment.secure_nodes_AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.secure_nodes_AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.secure_nodes_AmazonEC2ContainerRegistryReadOnly
+    aws_iam_role_policy_attachment.secure_nodes_AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.secure_nodes_AmazonEKSNodePolicy
   ]
 
 }
