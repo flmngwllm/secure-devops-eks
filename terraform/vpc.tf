@@ -86,14 +86,14 @@ resource "aws_nat_gateway" "secure_devops_nat" {
   depends_on = [aws_internet_gateway.secure_devops_gw]
 }
 
-resource "aws_route_table_association" "a" {
+resource "aws_route_table_association" "secure_devops_route_table_public" {
   depends_on     = [aws_subnet.public_secure_devops_subnet]
   for_each       = aws_subnet.public_secure_devops_subnet
   subnet_id      = each.value.id
   route_table_id = aws_route_table.secure_devops_public_route_table.id
 }
 
-resource "aws_route_table_association" "b" {
+resource "aws_route_table_association" "secure_devops_route_table_private" {
   for_each       = aws_subnet.private_secure_devops_subnet
   depends_on     = [aws_subnet.private_secure_devops_subnet]
   subnet_id      = each.value.id

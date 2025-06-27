@@ -58,6 +58,13 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "eks:CreateNodegroup",
           "eks:DeleteCluster",
           "eks:DeleteNodegroup",
+          "eks:CreateAccessEntry",
+          "eks:CreateAccessPolicyAssociation",
+          "eks:DeleteAccessEntry",
+          "eks:DescribeAccessEntry",
+          "eks:AssociateAccessPolicy",
+          "eks:ListAssociatedAccessPolicies",
+          "eks:DisassociateAccessPolicy"      
         ],
         Effect   = "Allow",
         Resource = "*"
