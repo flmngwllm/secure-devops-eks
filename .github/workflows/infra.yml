@@ -41,9 +41,15 @@ jobs:
           role-to-assume: ${{ secrets.ACTIONS_ROLE_ARN }}
           aws-region: us-east-1
       
+      - name: Clean Terraform cache
+        run: rm -rf .terraform .terraform.lock.hcl
+
       - name: Terraform Init
         run: terraform init -upgrade
 
+      - name: Show provider versions
+        run: terraform providers
+        
       - name: Terraform Format
         run: terraform fmt -check
 
