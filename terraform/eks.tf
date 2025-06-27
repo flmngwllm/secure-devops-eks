@@ -3,6 +3,7 @@ resource "aws_eks_cluster" "secure_cluster" {
 
   access_config {
     authentication_mode = "API"
+  }
 
     access_entries {
       principal_arn = var.github_actions_role_arn
@@ -17,7 +18,7 @@ resource "aws_eks_cluster" "secure_cluster" {
       username      = "system:node:{{EC2PrivateDNSName}}"
       groups        = ["system:bootstrappers", "system:nodes"]
     }
-  }
+  
   role_arn = aws_iam_role.secure_devops_eks_cluster_role.arn
   version  = "1.31"
 
