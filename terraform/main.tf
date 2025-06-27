@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = ">= 5.25.0"
     }
   }
   backend "s3" {
@@ -18,16 +18,3 @@ provider "aws" {
   region = var.REGION
 }
 
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.secure_cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.secure_cluster.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-}
-
-data "aws_eks_cluster" "secure_cluster" {
-  name = "secure_cluster"
-}
-
-data "aws_eks_cluster_auth" "cluster" {
-  name = "secure_cluster"
-}

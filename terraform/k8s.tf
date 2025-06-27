@@ -1,28 +1,2 @@
-resource "kubernetes_config_map" "aws_auth" {
-  metadata {
-    name      = "aws-auth"
-    namespace = "kube-system"
-  }
 
-  depends_on = [
-    aws_eks_cluster.secure_cluster,
-  ]
-  data = {
-    mapRoles = yamlencode([
-      {
-        rolearn  = aws_iam_role.secure_devops_node_group_role.arn
-        username = "system:node:{{EC2PrivateDNSName}}"
-        groups = [
-          "system:bootstrappers",
-          "system:nodes"
-        ]
-      },
-      {
-        rolearn  = var.github_actions_role_arn
-        username = "github-actions"
-        groups   = ["system:masters"]
-      }
-    ])
-  }
-}
 
