@@ -34,6 +34,8 @@ jobs:
       
       - name: Setup terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
       
       - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -49,7 +51,7 @@ jobs:
 
       - name: Show provider versions
         run: terraform providers
-        
+
       - name: Terraform Format
         run: terraform fmt -check
 
