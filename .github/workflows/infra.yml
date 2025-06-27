@@ -68,7 +68,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           terraform apply -auto-approve -input=false \
-            -target=aws_eks_cluster.secure_cluster \  
+            -target=aws_eks_cluster.secure_cluster \
             -target=aws_vpc.secure_devops_vpc \
             -target=aws_subnet.public_secure_devops_subnet \
             -target=aws_subnet.private_secure_devops_subnet \
