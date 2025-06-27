@@ -1,10 +1,10 @@
 resource "aws_eks_cluster" "secure_cluster" {
   name = "secure_cluster"
 
-    access_config {
+  access_config {
     authentication_mode = "API"
 
-    }
+  }
   role_arn = aws_iam_role.secure_devops_eks_cluster_role.arn
   version  = "1.31"
 
@@ -85,7 +85,7 @@ resource "aws_eks_access_entry" "node_access" {
 resource "aws_eks_access_policy_association" "node_access" {
   cluster_name  = aws_eks_cluster.secure_cluster.name
   principal_arn = aws_iam_role.secure_devops_node_group_role.arn
-  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNodePolicy"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNodePolicy"
   access_scope {
     type = "cluster"
   }
