@@ -82,37 +82,22 @@ jobs:
         run: |
           aws eks --region us-east-1 update-kubeconfig --name secure_cluster
 
-      - name: Export required Terraform variables
-        run: |
-          echo "PUBLIC_ACCESS_CIDRS=${{ env.PUBLIC_ACCESS_CIDRS }}" >> $GITHUB_ENV
-          echo "GITHUB_ACTIONS_ROLE_ARN=${{ env.ACTIONS_ROLE_ARN }}" >> $GITHUB_ENV
-          echo "SSH_KEY_NAME=${{ env.SSH_KEY_NAME }}" >> $GITHUB_ENV
-
+      
       - name: Import aws-auth ConfigMap (only if exists)
         if: github.event_name != 'pull_request'
         run: |
-          export TF_VAR_public_access_cidrs='["0.0.0.0/0"]'
-          export TF_VAR_github_actions_role_arn="${{ env.ACTIONS_ROLE_ARN }}"
-          export TF_VAR_ssh_key_name="${{ env.SSH_KEY_NAME }}"
-          export TF_VAR_enable_k8s_import=true
-
-          terraform init -upgrade
-
           if kubectl get configmap aws-auth -n kube-system; then
-            terraform plan -var="enable_k8s_import=true" -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" -var='public_access_cidrs=["0.0.0.0/0"]' -var="ssh_key_name=${SSH_KEY_NAME}" > /dev/null
-            terraform import -input=false 'kubernetes_config_map.aws_auth[0]' kube-system/aws-auth || true
-          else
-            echo "aws-auth does not exist yet"
-            fi
+            terraform import -input=false kubernetes_config_map.aws_auth kube-system/aws-auth || true
+          fi
 
-      - name: Terraform Apply (Phase 2a - Apply with Import Flag)
+        
+      - name: Terraform Apply (Phase 2 - Apply with Import Flag)
         if: github.event_name != 'pull_request'
         run: |
           terraform apply -auto-approve -input=false \
             -var='public_access_cidrs=["0.0.0.0/0"]' \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
-            -var="enable_k8s_resources=false" \
-            -var="enable_k8s_import=true" \
+            -var="enable_k8s_resources=true" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
 
      
