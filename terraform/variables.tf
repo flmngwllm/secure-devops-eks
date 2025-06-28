@@ -36,3 +36,9 @@ variable "ssh_key_name" {
   description = "Name of the SSH key pair to use for EKS node access"
   type        = string
 }
+
+variable "enable_k8s_resources" {
+  description = "Enable Kubernetes resources"
+  type        = bool
+  default     = false
+}
