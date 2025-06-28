@@ -57,7 +57,7 @@ jobs:
             -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
-
+      
       - name: Terraform Apply (Phase 1 - Infra Only)
         if: github.event_name != 'pull_request'
         run: |
@@ -73,11 +73,15 @@ jobs:
           aws eks wait cluster-active --name secure_cluster --region us-east-1
           echo "Waiting for node group to be ready..."
           aws eks wait nodegroup-active --cluster-name secure_cluster --nodegroup-name secure_devops_node_group --region us-east-1
-          
-      - name: Import aws-auth ConfigMap
+
+      - name: Import aws-auth ConfigMap (only if exists)
         if: github.event_name != 'pull_request'
         run: |
-          terraform import -input=false kubernetes_config_map.aws_auth kube-system/aws-auth || true
+            if kubectl get configmap aws-auth -n kube-system; then
+            terraform import -input=false kubernetes_config_map.aws_auth kube-system/aws-auth || true
+            else
+            echo "aws-auth does not exist yet"
+            fi
 
       - name: Terraform Apply (Phase 2 - Kubernetes Resources)
         if: github.event_name != 'pull_request'
