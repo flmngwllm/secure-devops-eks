@@ -55,7 +55,7 @@ jobs:
         run: |
           echo "CIDRS: $PUBLIC_ACCESS_CIDRS"
           terraform plan -no-color -out=tfplan -input=false \
-            -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
+            -var='public_access_cidrs=["0.0.0.0/0"]' \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="enable_k8s_resources=false" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
@@ -64,7 +64,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           terraform apply -auto-approve -input=false \
-            -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
+            -var='public_access_cidrs=["0.0.0.0/0"]' \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="enable_k8s_resources=false" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
@@ -107,7 +107,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           terraform apply -auto-approve -input=false \
-            -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
+            -var='public_access_cidrs=["0.0.0.0/0"]' \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="enable_k8s_resources=false" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
