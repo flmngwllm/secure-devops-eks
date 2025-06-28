@@ -83,22 +83,6 @@ resource "aws_eks_access_policy_association" "gha_admin" {
   depends_on = [aws_eks_access_entry.gha_access]
 }
 
-resource "aws_eks_access_entry" "node_access" {
-  cluster_name  = aws_eks_cluster.secure_cluster.name
-  principal_arn = aws_iam_role.secure_devops_node_group_role.arn
-  type          = "STANDARD"
-}
-
-resource "aws_eks_access_policy_association" "node_access" {
-  cluster_name  = aws_eks_cluster.secure_cluster.name
-  principal_arn = aws_iam_role.secure_devops_node_group_role.arn
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSNodePolicy"
-  access_scope {
-    type = "cluster"
-  }
-
-  depends_on = [aws_eks_access_entry.node_access]
-}
 
 resource "aws_eks_access_entry" "devops_user_access" {
   cluster_name  = aws_eks_cluster.secure_cluster.name

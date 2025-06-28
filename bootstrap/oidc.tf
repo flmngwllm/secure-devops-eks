@@ -129,7 +129,12 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "ec2:AttachInternetGateway",
           "ec2:DeleteInternetGateway",
           "ec2:AllocateAddress",
-          "ec2:AssociateRouteTable"
+          "ec2:AssociateRouteTable",
+          "ec2:ModifyVpcAttribute",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteSecurityGroup"
           
         ],
         Effect   = "Allow",
