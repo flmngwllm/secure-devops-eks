@@ -60,11 +60,24 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
             image-ref: ${{ steps.login-ecr.outputs.registry }}/secure-app:${{ github.sha }}-${{ github.run_number }}
+      
+      - name: Wait for EKS access to propagate
+        run: |
+          echo "Sleeping for 60 seconds to allow EKS IAM access policy to propagate..."
+          sleep 60
 
       - name: Kubernetes kubeconfig
         if: github.event_name != 'pull_request'
         run: |
           aws eks --region us-east-1 update-kubeconfig --name secure_cluster
+      
+      - name: Wait for EKS IAM access propagation
+        run: |
+          echo "Waiting 60 seconds for EKS access to propagate..."
+          sleep 60
+
+      - name: Verify access to EKS
+        run: |
           kubectl get nodes 
 
       - name: Install helm

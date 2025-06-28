@@ -80,7 +80,10 @@ resource "aws_eks_access_policy_association" "gha_admin" {
     type = "cluster"
   }
 
-  depends_on = [aws_eks_access_entry.gha_access]
+  depends_on = [
+    aws_eks_access_entry.gha_access,
+    aws_eks_cluster.secure_cluster
+  ]
 }
 
 
