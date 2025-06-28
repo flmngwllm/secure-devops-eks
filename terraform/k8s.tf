@@ -3,7 +3,7 @@ resource "kubernetes_config_map" "aws_auth" {
     name      = "aws-auth"
     namespace = "kube-system"
   }
-  
+
   depends_on = [
     aws_eks_node_group.secure_devops_node_group
   ]
