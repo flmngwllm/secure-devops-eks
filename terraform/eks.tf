@@ -71,7 +71,7 @@ resource "aws_eks_access_entry" "gha_access" {
   cluster_name  = aws_eks_cluster.secure_cluster.name
   principal_arn = var.github_actions_role_arn
   type          = "STANDARD"
-  
+
 }
 
 resource "aws_eks_access_policy_association" "gha_admin" {
