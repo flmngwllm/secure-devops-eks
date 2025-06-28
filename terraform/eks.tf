@@ -2,7 +2,8 @@ resource "aws_eks_cluster" "secure_cluster" {
   name = "secure_cluster"
 
   access_config {
-    authentication_mode = "API"
+    authentication_mode = "API_AND_CONFIG_MAP"
+
 
   }
   role_arn = aws_iam_role.secure_devops_eks_cluster_role.arn
@@ -70,6 +71,7 @@ resource "aws_eks_access_entry" "gha_access" {
   cluster_name  = aws_eks_cluster.secure_cluster.name
   principal_arn = var.github_actions_role_arn
   type          = "STANDARD"
+  
 }
 
 resource "aws_eks_access_policy_association" "gha_admin" {
