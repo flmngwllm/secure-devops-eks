@@ -53,9 +53,9 @@ jobs:
 
       - name: Terraform Plan
         run: |
-          export TF_VAR_public_access_cidrs='${{ env.PUBLIC_ACCESS_CIDRS }}'
-          export TF_VAR_github_actions_role_arn='${{ env.ACTIONS_ROLE_ARN }}'
-          export TF_VAR_ssh_key_name='${{ env.SSH_KEY_NAME }}'
+          export TF_VAR_public_access_cidrs="${{ env.PUBLIC_ACCESS_CIDRS }}"
+          export TF_VAR_github_actions_role_arn="${{ env.ACTIONS_ROLE_ARN }}"
+          export TF_VAR_ssh_key_name="${{ env.SSH_KEY_NAME }}"
           export TF_VAR_enable_k8s_resources=false
           
           terraform plan -no-color -out=tfplan -input=false 
@@ -63,9 +63,9 @@ jobs:
       - name: Terraform Apply (Phase 1 - Infra Only)
         if: github.event_name != 'pull_request'
         run: |
-          export TF_VAR_public_access_cidrs='${{ env.PUBLIC_ACCESS_CIDRS }}'
-          export TF_VAR_github_actions_role_arn='${{ env.ACTIONS_ROLE_ARN }}'
-          export TF_VAR_ssh_key_name='${{ env.SSH_KEY_NAME }}'
+          export TF_VAR_public_access_cidrs="${{ env.PUBLIC_ACCESS_CIDRS }}"
+          export TF_VAR_github_actions_role_arn="${{ env.ACTIONS_ROLE_ARN }}"
+          export TF_VAR_ssh_key_name="${{ env.SSH_KEY_NAME }}"
           export TF_VAR_enable_k8s_resources=false
 
           terraform apply -auto-approve -input=false 
@@ -92,9 +92,9 @@ jobs:
       - name: Import aws-auth ConfigMap (only if exists)
         if: github.event_name != 'pull_request'
         run: |
-          export TF_VAR_public_access_cidrs='${{ env.PUBLIC_ACCESS_CIDRS }}'
-          export TF_VAR_github_actions_role_arn='${{ env.ACTIONS_ROLE_ARN }}'
-          export TF_VAR_ssh_key_name='${{ env.SSH_KEY_NAME }}'
+          export TF_VAR_public_access_cidrs="${{ env.PUBLIC_ACCESS_CIDRS }}"
+          export TF_VAR_github_actions_role_arn="${{ env.ACTIONS_ROLE_ARN }}"
+          export TF_VAR_ssh_key_name="${{ env.SSH_KEY_NAME }}"
 
           terraform init -upgrade
 
@@ -107,9 +107,9 @@ jobs:
       - name: Terraform Apply (Phase 2 - Kubernetes Resources)
         if: github.event_name != 'pull_request'
         run: |
-          export TF_VAR_public_access_cidrs='${{ env.PUBLIC_ACCESS_CIDRS }}'
-          export TF_VAR_github_actions_role_arn='${{ env.ACTIONS_ROLE_ARN }}'
-          export TF_VAR_ssh_key_name='${{ env.SSH_KEY_NAME }}'
+          export TF_VAR_public_access_cidrs="${{ env.PUBLIC_ACCESS_CIDRS }}"
+          export TF_VAR_github_actions_role_arn="${{ env.ACTIONS_ROLE_ARN }}"
+          export TF_VAR_ssh_key_name="${{ env.SSH_KEY_NAME }}"
           export TF_VAR_enable_k8s_resources=false
 
           terraform apply -auto-approve -input=false 
