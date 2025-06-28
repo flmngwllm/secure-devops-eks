@@ -48,7 +48,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
           ECR_REPOSITORY: secure-app
-          ECR_IMAGE_TAG: ${{ github.sha || 'latest'}}
+          ECR_IMAGE_TAG: ${{ github.sha }}-${{ github.run_number }}
         run: |
           echo "Building Docker image"
           docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG" ./testapp
@@ -59,7 +59,7 @@ jobs:
       - name: Scan Docker image
         uses: aquasecurity/trivy-action@master
         with:
-            image-ref: ${{ steps.login-ecr.outputs.registry }}/secure-app:${{ github.sha }}
+            image-ref: ${{ steps.login-ecr.outputs.registry }}/secure-app:${{ github.sha }}-${{ github.run_number }}
 
       - name: Kubernetes kubeconfig
         if: github.event_name != 'pull_request'

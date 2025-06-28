@@ -36,7 +36,15 @@ resource "aws_iam_role" "github_actions" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         }
         }
-      }
+      },
+      {
+      Effect = "Allow",
+      Principal = {
+        AWS = "arn:aws:iam::${var.account_id}:user/secure-devops"
+      },
+      Action = "sts:AssumeRole"
+    }
+      
     ]
   })
 }
@@ -64,7 +72,8 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "eks:DescribeAccessEntry",
           "eks:AssociateAccessPolicy",
           "eks:ListAssociatedAccessPolicies",
-          "eks:DisassociateAccessPolicy"      
+          "eks:DisassociateAccessPolicy",
+          "eks:AccessKubernetesApi"      
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -80,7 +89,12 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "ecr:ListTagsForResource",
           "ecr:CreateRepository",
           "ecr:TagResource",
-          "ec2:CreateTags"
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          
+          
+          
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -134,7 +148,11 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "ec2:RevokeSecurityGroupEgress",
           "ec2:RevokeSecurityGroupEgress",
           "ec2:DescribeNetworkInterfaces",
-          "ec2:DeleteSecurityGroup"
+          "ec2:DeleteSecurityGroup",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:DescribeKeyPairs",
+          "ec2:CreateTags"
           
         ],
         Effect   = "Allow",
