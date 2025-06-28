@@ -66,9 +66,10 @@ jobs:
           echo "Waiting 60 seconds for EKS access to propagate..."
           sleep 60
 
-      - name: Verify access to EKS
+      - name: Who am I?
         run: |
-          kubectl get nodes 
+          kubectl config view --minify -o jsonpath='{.users[0].user.exec.args}'
+          aws sts get-caller-identity 
 
       - name: Install helm
         run: |
