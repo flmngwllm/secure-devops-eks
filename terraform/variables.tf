@@ -31,3 +31,8 @@ variable "github_actions_role_arn" {
   type        = string
   description = "ARN of the GitHub Actions IAM Role"
 }
+
+variable "ssh_key_name" {
+  description = "Name of the SSH key pair to use for EKS node access"
+  type        = string
+}
