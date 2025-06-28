@@ -55,7 +55,10 @@ jobs:
         run: |
           echo "Sleeping for 60 seconds to allow EKS IAM access policy to propagate..."
           sleep 60
-
+      - name: Update kubeconfig
+        run: |
+          aws eks --region us-east-1 update-kubeconfig --name secure_cluster
+          
       - name: Wait for EKS IAM access propagation
         run: |
           echo "Waiting 60 seconds for EKS access to propagate..."
