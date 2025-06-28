@@ -42,3 +42,9 @@ variable "enable_k8s_resources" {
   type        = bool
   default     = false
 }
+
+variable "enable_k8s_import" {
+  description = "Temporarily enable aws-auth resource for import in CI"
+  type        = bool
+  default     = false
+}

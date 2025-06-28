@@ -94,6 +94,7 @@ jobs:
           export TF_VAR_public_access_cidrs='["0.0.0.0/0"]'
           export TF_VAR_github_actions_role_arn="${{ env.ACTIONS_ROLE_ARN }}"
           export TF_VAR_ssh_key_name="${{ env.SSH_KEY_NAME }}"
+          export TF_VAR_enable_k8s_import=true
 
           terraform init -upgrade
 
@@ -103,13 +104,24 @@ jobs:
             echo "aws-auth does not exist yet"
             fi
 
-      - name: Terraform Apply (Phase 2 - Kubernetes Resources)
+      - name: Terraform Apply (Phase 2a - Apply with Import Flag)
         if: github.event_name != 'pull_request'
         run: |
           terraform apply -auto-approve -input=false \
             -var='public_access_cidrs=["0.0.0.0/0"]' \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="enable_k8s_resources=false" \
+            -var="enable_k8s_import=true" \
+            -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
+
+      - name: Terraform Apply (Phase 2b - Regular Apply)
+        if: github.event_name != 'pull_request'
+        run: |
+          terraform apply -auto-approve -input=false \
+            -var='public_access_cidrs=["0.0.0.0/0"]' \
+            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
+            -var="enable_k8s_resources=false" \
+            -var="enable_k8s_import=false" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
 
       - name: Github SHA

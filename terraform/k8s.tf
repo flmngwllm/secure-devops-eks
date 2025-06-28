@@ -1,6 +1,6 @@
 resource "kubernetes_config_map" "aws_auth" {
 
-  count = var.enable_k8s_resources ? 1 : 0
+  count = var.enable_k8s_resources || var.enable_k8s_import ? 1 : 0
 
   metadata {
     name      = "aws-auth"
