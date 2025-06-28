@@ -115,16 +115,7 @@ jobs:
             -var="enable_k8s_import=true" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
 
-      - name: Terraform Apply (Phase 2b - Regular Apply)
-        if: github.event_name != 'pull_request'
-        run: |
-          terraform apply -auto-approve -input=false \
-            -var='public_access_cidrs=["0.0.0.0/0"]' \
-            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
-            -var="enable_k8s_resources=false" \
-            -var="enable_k8s_import=false" \
-            -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
-
+     
       - name: Github SHA
         if: github.event_name != 'pull_request'
         run: echo "${GITHUB_SHA}" > commit_sha.txt
