@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 5.25.0"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.25.2"
+    }
   }
   backend "s3" {
     bucket         = "secure-devops-terraform-state"
