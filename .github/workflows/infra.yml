@@ -73,6 +73,11 @@ jobs:
           aws eks wait cluster-active --name secure_cluster --region us-east-1
           echo "Waiting for node group to be ready..."
           aws eks wait nodegroup-active --cluster-name secure_cluster --nodegroup-name secure_devops_node_group --region us-east-1
+          
+      - name: Import aws-auth ConfigMap
+        if: github.event_name != 'pull_request'
+        run: |
+          terraform import -input=false kubernetes_config_map.aws_auth kube-system/aws-auth || true
 
       - name: Terraform Apply (Phase 2 - Kubernetes Resources)
         if: github.event_name != 'pull_request'
