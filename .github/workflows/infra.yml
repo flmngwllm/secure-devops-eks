@@ -14,7 +14,7 @@ on:
 
 env: 
   TF_WORKING_DIR: ./terraform
-  PUBLIC_ACCESS_CIDRS: "[\"0.0.0.0/0\"]"
+  PUBLIC_ACCESS_CIDRS: '["0.0.0.0/0"]'
   ACTIONS_ROLE_ARN: ${{ secrets.ACTIONS_ROLE_ARN }}
   SSH_KEY_NAME: ${{ secrets.SSH_KEY_NAME }}
 
