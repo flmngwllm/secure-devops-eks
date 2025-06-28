@@ -80,7 +80,13 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           aws eks --region us-east-1 update-kubeconfig --name secure_cluster
-          
+
+      - name: Export required Terraform variables
+        run: |
+          echo "PUBLIC_ACCESS_CIDRS=${{ env.PUBLIC_ACCESS_CIDRS }}" >> $GITHUB_ENV
+          echo "GITHUB_ACTIONS_ROLE_ARN=${{ env.ACTIONS_ROLE_ARN }}" >> $GITHUB_ENV
+          echo "SSH_KEY_NAME=${{ env.SSH_KEY_NAME }}" >> $GITHUB_ENV
+
       - name: Import aws-auth ConfigMap (only if exists)
         if: github.event_name != 'pull_request'
         run: |
@@ -93,11 +99,7 @@ jobs:
       - name: Terraform Apply (Phase 2 - Kubernetes Resources)
         if: github.event_name != 'pull_request'
         run: |
-          terraform apply -auto-approve -input=false \
-            -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
-            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
-            -var="enable_k8s_resources=true" \
-            -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
+          terraform apply -auto-approve -input=false
 
       - name: Github SHA
         if: github.event_name != 'pull_request'
