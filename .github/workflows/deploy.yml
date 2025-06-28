@@ -58,11 +58,11 @@ jobs:
       - name: Update kubeconfig
         run: |
           aws eks --region us-east-1 update-kubeconfig --name secure_cluster
-          
+
       - name: Wait for EKS IAM access propagation
         run: |
-          echo "Waiting 60 seconds for EKS access to propagate..."
-          sleep 60
+          echo "Waiting 180 seconds for EKS access to propagate..."
+          sleep 180
 
       - name: Who am I?
         run: |
