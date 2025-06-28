@@ -16,6 +16,7 @@ env:
   TF_WORKING_DIR: ./terraform
   PUBLIC_ACCESS_CIDRS: '["0.0.0.0/0"]'
   ACTIONS_ROLE_ARN: ${{ secrets.ACTIONS_ROLE_ARN }}
+  SSH_KEY_NAME: ${{ secrets.SSH_KEY_NAME }}
 
 permissions:
   id-token: write
@@ -54,7 +55,8 @@ jobs:
         run: |
           terraform plan -no-color -out=tfplan -input=false \
             -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
-            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" || exit 1
+            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
+            -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
 
       - name: Terraform Apply
         if: github.event_name != 'pull_request'
