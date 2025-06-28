@@ -53,6 +53,7 @@ jobs:
 
       - name: Terraform Plan
         run: |
+          echo "CIDRS: $PUBLIC_ACCESS_CIDRS"
           terraform plan -no-color -out=tfplan -input=false \
             -var="public_access_cidrs=${PUBLIC_ACCESS_CIDRS}" \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
