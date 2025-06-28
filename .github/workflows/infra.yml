@@ -76,6 +76,11 @@ jobs:
           echo "Waiting for node group to be ready..."
           aws eks wait nodegroup-active --cluster-name secure_cluster --nodegroup-name secure_devops_node_group --region us-east-1
 
+      - name: Kubernetes kubeconfig
+        if: github.event_name != 'pull_request'
+        run: |
+          aws eks --region us-east-1 update-kubeconfig --name secure_cluster
+          
       - name: Import aws-auth ConfigMap (only if exists)
         if: github.event_name != 'pull_request'
         run: |
