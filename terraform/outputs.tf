@@ -23,6 +23,3 @@ output "ecr_repository_url" {
   description = "URL of the ECR repository to push images"
 }
 
-output "github_actions_access_entry_status" {
-  value = aws_eks_access_entry.gha_access.status
-}
