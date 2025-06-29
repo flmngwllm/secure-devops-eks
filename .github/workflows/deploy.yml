@@ -20,126 +20,42 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: AWS Credentials
+      - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::831274730062:role/github-actions-role
           role-session-name: GitHubActions
           aws-region: us-east-1
 
-      - name: tfsec action
-        uses: aquasecurity/tfsec-action@v1.0.3
-        continue-on-error: true
-       
-      - name: Login to ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-      
-      - name: Build Docker image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
-          ECR_REPOSITORY: secure-app
-          ECR_IMAGE_TAG: ${{ github.sha }}-${{ github.run_number }}
+      - name: Sleep to allow IAM propagation
         run: |
-          echo "Building Docker image"
-          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG" ./testapp
-          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG"
-          echo "Docker image: $ECR_IMAGE_TAG pushed to ECR"
-          echo "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG"
+          echo "Waiting 30 seconds to allow IAM changes to propagate..."
+          sleep 30
 
-      - name: Scan Docker image
-        uses: aquasecurity/trivy-action@master
-        with:
-            image-ref: ${{ steps.login-ecr.outputs.registry }}/secure-app:${{ github.sha }}-${{ github.run_number }}
-      
-      - name: Wait for EKS access to propagate
-        run: |
-          echo "Sleeping for 60 seconds to allow EKS IAM access policy to propagate..."
-          sleep 60
+      - name: Verify assumed role identity
+        run: aws sts get-caller-identity
 
+      - name: Update kubeconfig (requires AWS creds)
+        run: |
+          aws eks update-kubeconfig \
+            --region us-east-1 \
+            --name secure_cluster
 
-      - name: Update kubeconfig
-        env:
-          AWS_ACCESS_KEY_ID: ""
-          AWS_SECRET_ACCESS_KEY: ""
-          AWS_SESSION_TOKEN: ""
+      - name: Clear AWS credentials to force OIDC
         run: |
-          aws eks --region us-east-1 update-kubeconfig --name secure_cluster
-      
-      - name: Wait for EKS IAM access propagation
-        run: |
-          echo "Waiting 180 seconds for EKS access to propagate..."
-          sleep 60
-      
-      
+          echo "Clearing AWS credentials to test OIDC-based kubectl..."
+          unset AWS_ACCESS_KEY_ID
+          unset AWS_SECRET_ACCESS_KEY
+          unset AWS_SESSION_TOKEN
 
-      - name: Who am I?
-        env:
-          AWS_ACCESS_KEY_ID: ""
-          AWS_SECRET_ACCESS_KEY: ""
-          AWS_SESSION_TOKEN: ""
+      - name: Who am I according to kubectl (OIDC)
         run: |
-          kubectl config view --minify -o jsonpath='{.users[0].user.exec.args}'
-          aws sts get-caller-identity 
+          kubectl config view --minify
+          kubectl config current-context
+          aws sts get-caller-identity
 
-      - name: Install helm
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-      
-      - name: Debug OIDC Token Claims
-        env:
-          AWS_ACCESS_KEY_ID: ""
-          AWS_SECRET_ACCESS_KEY: ""
-          AWS_SESSION_TOKEN: ""
-
-        run: |
-          echo "Decoding EKS token payload..."
-          RAW_TOKEN=$(aws eks get-token --cluster-name secure_cluster --region us-east-1 --output json | jq -r '.status.token')
-          PAYLOAD=$(echo "$RAW_TOKEN" | cut -d '.' -f2)
-    
-          # Base64 decode the payload
-          LEN=$((${#PAYLOAD} % 4))
-          if [ "$LEN" -eq 2 ]; then PAYLOAD="${PAYLOAD}==";
-          elif [ "$LEN" -eq 3 ]; then PAYLOAD="${PAYLOAD}=";
-          fi
-
-          echo "$PAYLOAD" | base64 -d 2>/dev/null || echo "[Decode Failed]"
-
-      
-      - name: Verify access to EKS
-        env:
-          AWS_ACCESS_KEY_ID: ""
-          AWS_SECRET_ACCESS_KEY: ""
-          AWS_SESSION_TOKEN: ""
-        
-        run: |
-          echo "Checking cluster node access..."
-          kubectl get nodes
-      
-      - name: Deploy to EKS 
-        env:
-          AWS_ACCESS_KEY_ID: ""
-          AWS_SECRET_ACCESS_KEY: ""
-          AWS_SESSION_TOKEN: ""
-        run: |
-          helm upgrade --install secure-app ./myapp-helm-chart --namespace default 
-
-      - name: Verify deployment
-        run: |
-          echo "Verifying deployment"
-          kubectl get pods --namespace default
-          kubectl get svc   
-          kubectl get deployments
-          kubectl get nodes
-        
-      - name: Running kube-bench
-        run: |
-            echo "Running kube-bench"
-            curl -LJO https://github.com/aquasecurity/kube-bench/releases/download/v0.6.18/kube-bench_0.6.18_linux_amd64.tar.gz
-            tar -xvf kube-bench_0.6.18_linux_amd64.tar.gz
-            chmod +x kube-bench
-            ./kube-bench --version
-            ./kube-bench --benchmark eks 
+      - name: Test kubectl access
+        run: kubectl get nodes
          
       
 
