@@ -20,7 +20,7 @@ resource "kubernetes_config_map" "aws_auth" {
       },
       {
         rolearn  = var.github_actions_role_arn
-        username = "{{SessionName}}"
+        username = "GitHubActions"
         groups   = ["system:masters"]
       }
     ])
