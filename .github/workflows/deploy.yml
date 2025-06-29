@@ -56,6 +56,8 @@ jobs:
         run: |
           echo "Sleeping for 60 seconds to allow EKS IAM access policy to propagate..."
           sleep 60
+
+
       - name: Update kubeconfig
         run: |
           aws eks --region us-east-1 update-kubeconfig --name secure_cluster
@@ -65,7 +67,12 @@ jobs:
           echo "Waiting 180 seconds for EKS access to propagate..."
           sleep 120
       
-
+      - name: Clear static AWS credentials from environment (force OIDC)
+        run: |
+          unset AWS_ACCESS_KEY_ID
+          unset AWS_SECRET_ACCESS_KEY
+          unset AWS_SESSION_TOKEN
+          
       - name: Who am I?
         run: |
           kubectl config view --minify -o jsonpath='{.users[0].user.exec.args}'
