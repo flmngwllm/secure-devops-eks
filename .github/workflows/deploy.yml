@@ -66,8 +66,8 @@ jobs:
       - name: Debug RBAC access for GitHub Actions role
         run: |
           echo "Checking if GitHub Actions can list nodes..."
-          kubectl auth can-i list nodes --as=github-actions --v=8
-          
+          kubectl auth can-i list nodes 
+
       - name: Who am I?
         run: |
           kubectl config view --minify -o jsonpath='{.users[0].user.exec.args}'
