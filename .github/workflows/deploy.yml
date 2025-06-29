@@ -63,10 +63,7 @@ jobs:
         run: |
           echo "Waiting 180 seconds for EKS access to propagate..."
           sleep 300
-      - name: Debug RBAC access for GitHub Actions role
-        run: |
-          echo "Checking if GitHub Actions can list nodes..."
-          kubectl auth can-i list nodes 
+      
 
       - name: Who am I?
         run: |
