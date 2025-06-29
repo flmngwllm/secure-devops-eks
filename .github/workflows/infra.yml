@@ -70,6 +70,14 @@ jobs:
             -var="enable_k8s_resources=false" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
       
+      - name: Debug Access Policy Association
+        run: |
+          echo "Current policy associations:"
+          aws eks describe-access-entry \
+            --cluster-name secure_cluster \
+            --principal-arn ${{ secrets.ACTIONS_ROLE_ARN }} \
+            --region us-east-1
+            
       - name: Wait for GitHub Actions access entry to propagate
         if: github.event_name != 'pull_request'
         run: |
