@@ -71,17 +71,17 @@ jobs:
               --cluster-name secure_cluster \
               --principal-arn arn:aws:iam::831274730062:role/github-actions-role \
               --region us-east-1 \
-              --query 'accessEntry.status' --output text)
+              --query 'associatedAccessPolicies[0].policyArn' --output text 2>/dev/null || echo "NotFound")
 
             echo "Current access status: $status"
 
-            if [ "$status" = "ACTIVE" ]; then
-              echo "Access entry is ACTIVE."
+            if [ "$status" != "None" ] && [ "$status" != "null" ] && [ "$status" != "NotFound" ]; then
+              echo "Access policy association is present."
               break
             fi
 
             if [ $i -eq 30 ]; then
-              echo "Access entry did not become ACTIVE within the expected time."
+              echo "Access policy did not propagate in time."
               exit 1
             fi
 
