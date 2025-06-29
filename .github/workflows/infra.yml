@@ -81,13 +81,13 @@ jobs:
               --region us-east-1 \
               --query 'accessEntry.status' --output text || echo "NotFound")
             echo "Current access status: $STATUS"
-            if [[ "$STATUS" == "ACTIVE" ]]; then
-              echo "Access entry is ACTIVE."
+            if [[ "$STATUS" == "ACTIVE" || "$STATUS" == "None" || "$STATUS" == "null" ]]; then
+              echo "Access entry is considered ACTIVE."
               break
             fi
             sleep 10
           done
-          
+
       - name: Wait for EKS Cluster readiness
         if: github.event_name != 'pull_request'
         run: |
