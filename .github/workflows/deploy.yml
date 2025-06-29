@@ -24,6 +24,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::831274730062:role/github-actions-role
+          role-session-name: GitHubActions
           aws-region: us-east-1
 
       - name: tfsec action
