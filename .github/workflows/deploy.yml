@@ -75,7 +75,7 @@ jobs:
 
             echo "Associated access policy count: $count"
 
-            if [ "$count" != "0" && "$count" != "None" && "$count" != "null" && "$count" != "NotFound" ]]; then
+            if [[ "$count" != "0" && "$count" != "None" && "$count" != "null" && "$count" != "NotFound" ]]; then
               echo "Access policy association is present."
               break
             fi
