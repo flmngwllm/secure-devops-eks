@@ -34,22 +34,3 @@ resource "kubernetes_config_map" "aws_auth" {
   #   }
 }
 
-resource "kubernetes_cluster_role_binding" "gha_admin" {
-  metadata {
-    name = "github-actions-admin"
-  }
-
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
-
-  subject {
-    kind      = "User"
-    name      = "github-actions"
-    api_group = "rbac.authorization.k8s.io"
-  }
-
-  depends_on = [kubernetes_config_map.aws_auth]
-}
