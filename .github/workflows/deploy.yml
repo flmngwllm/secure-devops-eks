@@ -58,7 +58,7 @@ jobs:
       - name: Debug EKS Access Entry
         run: |
           echo "Checking if GitHub Actions access entry exists..."
-          aws eks get-access-entry \
+          aws eks describe-access-entry \
             --cluster-name secure_cluster \
             --principal-arn arn:aws:iam::831274730062:role/github-actions-role \
             --region us-east-1 || echo "Access entry not found or not ready."
