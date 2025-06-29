@@ -72,7 +72,7 @@ jobs:
           unset AWS_ACCESS_KEY_ID
           unset AWS_SECRET_ACCESS_KEY
           unset AWS_SESSION_TOKEN
-          
+
       - name: Who am I?
         run: |
           kubectl config view --minify -o jsonpath='{.users[0].user.exec.args}'
@@ -83,6 +83,10 @@ jobs:
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
       
       - name: Debug OIDC Token Claims
+        env:
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_SESSION_TOKEN: ""
         run: |
           echo "Decoding EKS token payload..."
           RAW_TOKEN=$(aws eks get-token --cluster-name secure_cluster --region us-east-1 --output json | jq -r '.status.token')
@@ -97,6 +101,10 @@ jobs:
           echo "$PAYLOAD" | base64 -d 2>/dev/null || echo "[Decode Failed]"
 
       - name: Verify access to EKS
+        env:
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_SESSION_TOKEN: ""
         run: |
           echo "Checking cluster node access..."
           kubectl get nodes
