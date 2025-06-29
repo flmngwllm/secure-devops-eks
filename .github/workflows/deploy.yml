@@ -110,6 +110,10 @@ jobs:
           kubectl get nodes
       
       - name: Deploy to EKS 
+        env:
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_SESSION_TOKEN: ""
         run: |
           helm upgrade --install secure-app ./myapp-helm-chart --namespace default 
 
@@ -124,7 +128,7 @@ jobs:
       - name: Running kube-bench
         run: |
             echo "Running kube-bench"
-            curl -LJO http:https://github.com/aquasecurity/kube-bench/releases/download/v0.6.18/kube-bench_0.6.18_linux_amd64.tar.gz
+            curl -LJO https://github.com/aquasecurity/kube-bench/releases/download/v0.6.18/kube-bench_0.6.18_linux_amd64.tar.gz
             tar -xvf kube-bench_0.6.18_linux_amd64.tar.gz
             chmod +x kube-bench
             ./kube-bench --version
