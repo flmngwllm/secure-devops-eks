@@ -77,7 +77,7 @@ resource "aws_eks_access_entry" "gha_access" {
 resource "aws_eks_access_policy_association" "gha_admin" {
   cluster_name  = aws_eks_cluster.secure_cluster.name
   principal_arn = var.github_actions_role_arn
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
   access_scope {
     type = "cluster"
   }
@@ -98,7 +98,7 @@ resource "aws_eks_access_entry" "devops_user_access" {
 resource "aws_eks_access_policy_association" "devops_user_admin" {
   cluster_name  = aws_eks_cluster.secure_cluster.name
   principal_arn = "arn:aws:iam::831274730062:user/secure-devops"
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
   access_scope {
     type = "cluster"
