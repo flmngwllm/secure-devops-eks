@@ -66,9 +66,9 @@ jobs:
           for i in {1..30}; do
             status=$(aws eks get-access-entry \
               --cluster-name secure_cluster \
-            --principal-arn arn:aws:iam::831274730062:role/github-actions-role \
-            --region us-east-1 \
-            --query 'accessEntry.status' --output text 2>/dev/null)
+              --principal-arn arn:aws:iam::831274730062:role/github-actions-role \
+              --region us-east-1 \
+              --query 'accessEntry.status' --output text 2>/dev/null)
 
             echo "Current access status: $status"
 
@@ -76,7 +76,12 @@ jobs:
               echo "Access entry is ACTIVE."
               break
             fi
-            echo "Still not active. Waiting 10s..."
+
+            if [ $i -eq 30 ]; then
+              echo "Access entry did not become ACTIVE within the expected time."
+              exit 1
+            fi
+
             sleep 10
           done
 
@@ -111,7 +116,7 @@ jobs:
       - name: Running kube-bench
         run: |
             echo "Running kube-bench"
-            curl -LJO http:https://github.com/aquasecurity/kube-bench/releases/download/v0.6.18/kube-bench_0.6.18_linux_amd64.tar.gz
+            curl -LJO https://github.com/aquasecurity/kube-bench/releases/download/v0.6.18/kube-bench_0.6.18_linux_amd64.tar.gz
             tar -xvf kube-bench_0.6.18_linux_amd64.tar.gz
             chmod +x kube-bench
             ./kube-bench --version
