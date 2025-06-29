@@ -67,7 +67,7 @@ jobs:
         run: |
           echo "Waiting for GitHub Actions IAM access entry to become ACTIVE..."
           for i in {1..30}; do
-            status=$(aws eks get-access-entry \
+            status=$(aws eks describe-access-entry \
               --cluster-name secure_cluster \
               --principal-arn arn:aws:iam::831274730062:role/github-actions-role \
               --region us-east-1 \
