@@ -77,22 +77,33 @@ jobs:
             --cluster-name secure_cluster \
             --principal-arn ${{ secrets.ACTIONS_ROLE_ARN }} \
             --region us-east-1
-            
+
       - name: Wait for GitHub Actions access entry to propagate
         if: github.event_name != 'pull_request'
         run: |
           echo "Waiting for GitHub Actions IAM access entry to become ACTIVE..."
-          for i in {1..15}; do
-            STATUS=$(aws eks describe-access-entry \
+          POLICY_ARN="arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+          for i in {1..60}; do
+            attached=$(aws eks describe-access-entry \
               --cluster-name secure_cluster \
               --principal-arn ${{ secrets.ACTIONS_ROLE_ARN }} \
               --region us-east-1 \
-              --query 'accessEntry.status' --output text || echo "NotFound")
-            echo "Current access status: $STATUS"
-            if [[ "$STATUS" == "ACTIVE" || "$STATUS" == "None" || "$STATUS" == "null" ]]; then
-              echo "Access entry is considered ACTIVE."
+              --query "associatedAccessPolicies[?accessPolicyArn=='$POLICY_ARN'] | length(@)" \
+              --output text 2>/dev/null || echo "NotFound")
+      
+            echo "Found attached policy count: $attached"
+      
+            if [[ "$attached" == "1" ]]; then
+              echo "Policy is attached and ready."
               break
             fi
+      
+            if [ "$i" -eq 60 ]; then
+              echo "Timed out waiting for policy to attach."
+              exit 1
+            fi
+      
             sleep 10
           done
 
