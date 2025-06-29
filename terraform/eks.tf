@@ -83,8 +83,8 @@ resource "aws_eks_access_policy_association" "gha_admin" {
   }
 
   depends_on = [
-  time_sleep.delay_for_access_entry
-]
+    time_sleep.delay_for_access_entry
+  ]
 }
 
 
@@ -107,6 +107,6 @@ resource "aws_eks_access_policy_association" "devops_user_admin" {
 }
 
 resource "time_sleep" "delay_for_access_entry" {
-  depends_on = [aws_eks_access_entry.gha_access]
+  depends_on      = [aws_eks_access_entry.gha_access]
   create_duration = "30s"
 }
