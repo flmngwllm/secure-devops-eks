@@ -66,21 +66,21 @@ jobs:
       - name: Wait until GitHub Actions role access is ACTIVE
         run: |
           echo "Waiting for GitHub Actions IAM access entry to become ACTIVE..."
-          for i in {1..30}; do
-            status=$(aws eks describe-access-entry \
+          for i in {1..60}; do
+            count=$(aws eks describe-access-entry \
               --cluster-name secure_cluster \
               --principal-arn arn:aws:iam::831274730062:role/github-actions-role \
               --region us-east-1 \
-              --query 'associatedAccessPolicies[0].policyArn' --output text 2>/dev/null || echo "NotFound")
+              --query 'length(associatedAccessPolicies)' --output text 2>/dev/null || echo "NotFound")
 
-            echo "Current access status: $status"
+            echo "Associated access policy count: $count"
 
-            if [ "$status" != "None" ] && [ "$status" != "null" ] && [ "$status" != "NotFound" ]; then
+            if [ "$count" != "0" && "$count" != "None" && "$count" != "null" && "$count" != "NotFound" ]]; then
               echo "Access policy association is present."
               break
             fi
 
-            if [ $i -eq 30 ]; then
+            if [ $i -eq 60 ]; then
               echo "Access policy did not propagate in time."
               exit 1
             fi
