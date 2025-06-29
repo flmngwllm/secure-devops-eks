@@ -8,9 +8,9 @@ resource "aws_iam_openid_connect_provider" "github" {
   thumbprint_list = [
     "6938fd4d98bab03faadb97b34396831e3780aea1"
   ]
-#   lifecycle {
-#     prevent_destroy = true
-#   }
+  #   lifecycle {
+  #     prevent_destroy = true
+  #   }
 }
 
 # data "aws_iam_openid_connect_provider" "github" {
@@ -34,17 +34,17 @@ resource "aws_iam_role" "github_actions" {
           },
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-        }
+          }
         }
       },
       {
-      Effect = "Allow",
-      Principal = {
-        AWS = "arn:aws:iam::${var.account_id}:user/secure-devops"
-      },
-      Action = "sts:AssumeRole"
-    }
-      
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::${var.account_id}:user/secure-devops"
+        },
+        Action = "sts:AssumeRole"
+      }
+
     ]
   })
 }
@@ -79,7 +79,7 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "eks:AssociateAccessPolicy",
           "eks:ListAssociatedAccessPolicies",
           "eks:DisassociateAccessPolicy",
-          "eks:AccessKubernetesApi"      
+          "eks:AccessKubernetesApi"
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -98,9 +98,9 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "ecr:InitiateLayerUpload",
           "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload",
-          
-          
-          
+
+
+
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -159,7 +159,7 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "ec2:AuthorizeSecurityGroupEgress",
           "ec2:DescribeKeyPairs",
           "ec2:CreateTags"
-          
+
         ],
         Effect   = "Allow",
         Resource = "*"
@@ -194,14 +194,14 @@ resource "aws_iam_role_policy" "github_actions_policy" {
         Resource = "*"
       },
       {
-  "Effect": "Allow",
-  "Action": [
-    "ssm:Describe*",
-    "ssm:Get*",
-    "ssm:List*"
-  ],
-  "Resource": "*"
-}
+        "Effect" : "Allow",
+        "Action" : [
+          "ssm:Describe*",
+          "ssm:Get*",
+          "ssm:List*"
+        ],
+        "Resource" : "*"
+      }
 
     ]
   })
