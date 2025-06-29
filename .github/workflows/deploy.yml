@@ -61,11 +61,17 @@ jobs:
       - name: Update kubeconfig
         run: |
           aws eks --region us-east-1 update-kubeconfig --name secure_cluster
+      
+      - name: Clear static AWS credentials from environment (force OIDC)
+        run: |
+          unset AWS_ACCESS_KEY_ID
+          unset AWS_SECRET_ACCESS_KEY
+          unset AWS_SESSION_TOKEN
 
       - name: Wait for EKS IAM access propagation
         run: |
           echo "Waiting 180 seconds for EKS access to propagate..."
-          sleep 120
+          sleep 60
       
       
 
@@ -92,12 +98,7 @@ jobs:
 
           echo "$PAYLOAD" | base64 -d 2>/dev/null || echo "[Decode Failed]"
 
-      - name: Clear static AWS credentials from environment (force OIDC)
-        run: |
-          unset AWS_ACCESS_KEY_ID
-          unset AWS_SECRET_ACCESS_KEY
-          unset AWS_SESSION_TOKEN
-
+      
       - name: Verify access to EKS
         
         run: |
