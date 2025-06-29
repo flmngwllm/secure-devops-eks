@@ -58,8 +58,14 @@ resource "aws_iam_role_policy" "github_actions_policy" {
     Statement = [
       {
         Action = [
+          "eks:ListIdentityProviderConfigs",
+          "eks:ListAddons",
+          "eks:ListClusters",
+          "eks:ListUpdates",
+          "eks:ListNodegroups",
           "eks:DescribeCluster",
           "eks:DescribeNodegroup",
+          "eks:DescribeAddonVersions",
           "eks:UpdateClusterConfig",
           "eks:DescribeUpdate",
           "eks:CreateCluster",
@@ -171,7 +177,8 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "iam:CreateRole",
           "iam:PassRole",
           "iam:TagRole",
-          "iam:CreateServiceLinkedRole"
+          "iam:CreateServiceLinkedRole",
+          "iam:ListRoles"
         ],
         Effect   = "Allow",
         Resource = "*"
