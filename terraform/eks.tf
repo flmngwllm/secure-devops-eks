@@ -2,7 +2,7 @@ resource "aws_eks_cluster" "secure_cluster" {
   name = "secure_cluster"
 
   access_config {
-    authentication_mode = "API_AND_CONFIG_MAP"
+    authentication_mode = "API"
 
 
   }

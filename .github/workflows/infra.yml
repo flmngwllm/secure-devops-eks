@@ -69,7 +69,25 @@ jobs:
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="enable_k8s_resources=false" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
-
+      
+      - name: Wait for GitHub Actions access entry to propagate
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Waiting for GitHub Actions IAM access entry to become ACTIVE..."
+          for i in {1..15}; do
+            STATUS=$(aws eks describe-access-entry \
+              --cluster-name secure_cluster \
+              --principal-arn ${{ secrets.ACTIONS_ROLE_ARN }} \
+              --region us-east-1 \
+              --query 'accessEntry.status' --output text || echo "NotFound")
+            echo "Current access status: $STATUS"
+            if [[ "$STATUS" == "ACTIVE" ]]; then
+              echo "Access entry is ACTIVE."
+              break
+            fi
+            sleep 10
+          done
+          
       - name: Wait for EKS Cluster readiness
         if: github.event_name != 'pull_request'
         run: |
@@ -82,10 +100,6 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           aws eks --region us-east-1 update-kubeconfig --name secure_cluster
-
-      
-      
-
         
       - name: Terraform Apply (Phase 2 - Apply with Import Flag)
         if: github.event_name != 'pull_request'

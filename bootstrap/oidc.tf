@@ -192,7 +192,16 @@ resource "aws_iam_role_policy" "github_actions_policy" {
         ],
         Effect   = "Allow",
         Resource = "*"
-      }
+      },
+      {
+  "Effect": "Allow",
+  "Action": [
+    "ssm:Describe*",
+    "ssm:Get*",
+    "ssm:List*"
+  ],
+  "Resource": "*"
+}
 
     ]
   })
