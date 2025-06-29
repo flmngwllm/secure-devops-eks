@@ -62,7 +62,7 @@ jobs:
       - name: Wait for EKS IAM access propagation
         run: |
           echo "Waiting 180 seconds for EKS access to propagate..."
-          sleep 300
+          sleep 120
       
 
       - name: Who am I?
@@ -74,12 +74,20 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
       
-      - name: Decode EKS token and inspect groups (debug)
+      - name: Debug OIDC Token Claims
         run: |
-          TOKEN=$(aws eks get-token --cluster-name secure_cluster --region us-east-1 --output json | jq -r '.status.token' | cut -d '.' -f2 | base64 -d)
-          echo "Decoded EKS token:"
-          echo "$TOKEN"
-          
+          echo "Decoding EKS token payload..."
+          RAW_TOKEN=$(aws eks get-token --cluster-name secure_cluster --region us-east-1 --output json | jq -r '.status.token')
+          PAYLOAD=$(echo "$RAW_TOKEN" | cut -d '.' -f2)
+    
+          # Base64 decode the payload
+          LEN=$((${#PAYLOAD} % 4))
+          if [ "$LEN" -eq 2 ]; then PAYLOAD="${PAYLOAD}==";
+          elif [ "$LEN" -eq 3 ]; then PAYLOAD="${PAYLOAD}=";
+          fi
+
+          echo "$PAYLOAD" | base64 -d 2>/dev/null || echo "[Decode Failed]"
+
       - name: Verify access to EKS
         run: |
           echo "Checking cluster node access..."
