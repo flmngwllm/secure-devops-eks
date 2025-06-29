@@ -59,15 +59,13 @@ jobs:
 
 
       - name: Update kubeconfig
+        env:
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_SESSION_TOKEN: ""
         run: |
           aws eks --region us-east-1 update-kubeconfig --name secure_cluster
       
-      - name: Clear static AWS credentials from environment (force OIDC)
-        run: |
-          unset AWS_ACCESS_KEY_ID
-          unset AWS_SECRET_ACCESS_KEY
-          unset AWS_SESSION_TOKEN
-
       - name: Wait for EKS IAM access propagation
         run: |
           echo "Waiting 180 seconds for EKS access to propagate..."
@@ -76,6 +74,10 @@ jobs:
       
 
       - name: Who am I?
+        env:
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_SESSION_TOKEN: ""
         run: |
           kubectl config view --minify -o jsonpath='{.users[0].user.exec.args}'
           aws sts get-caller-identity 
@@ -85,6 +87,11 @@ jobs:
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
       
       - name: Debug OIDC Token Claims
+        env:
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_SESSION_TOKEN: ""
+
         run: |
           echo "Decoding EKS token payload..."
           RAW_TOKEN=$(aws eks get-token --cluster-name secure_cluster --region us-east-1 --output json | jq -r '.status.token')
@@ -100,12 +107,20 @@ jobs:
 
       
       - name: Verify access to EKS
+        env:
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_SESSION_TOKEN: ""
         
         run: |
           echo "Checking cluster node access..."
           kubectl get nodes
       
       - name: Deploy to EKS 
+        env:
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_SESSION_TOKEN: ""
         run: |
           helm upgrade --install secure-app ./myapp-helm-chart --namespace default 
 
