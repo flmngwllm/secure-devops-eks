@@ -73,7 +73,13 @@ jobs:
       - name: Install helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
+      
+      - name: Decode EKS token and inspect groups (debug)
+        run: |
+          TOKEN=$(aws eks get-token --cluster-name secure_cluster --region us-east-1 --output json | jq -r '.status.token' | cut -d '.' -f2 | base64 -d)
+          echo "Decoded EKS token:"
+          echo "$TOKEN"
+          
       - name: Verify access to EKS
         run: |
           echo "Checking cluster node access..."
