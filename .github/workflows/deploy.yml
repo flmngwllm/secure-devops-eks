@@ -68,7 +68,7 @@ jobs:
               --cluster-name secure_cluster \
               --principal-arn arn:aws:iam::831274730062:role/github-actions-role \
               --region us-east-1 \
-              --query 'accessEntry.status' --output text 2>/dev/null)
+              --query 'accessEntry.status' --output text)
 
             echo "Current access status: $status"
 
