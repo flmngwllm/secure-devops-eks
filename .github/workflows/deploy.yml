@@ -20,42 +20,102 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials (OIDC)
+      - name: AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::831274730062:role/github-actions-role
           role-session-name: GitHubActions
           aws-region: us-east-1
 
-      - name: Sleep to allow IAM propagation
+      - name: tfsec action
+        uses: aquasecurity/tfsec-action@v1.0.3
+        continue-on-error: true
+       
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      - name: Build Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
+          ECR_REPOSITORY: secure-app
+          ECR_IMAGE_TAG: ${{ github.sha }}-${{ github.run_number }}
         run: |
-          echo "Waiting 30 seconds to allow IAM changes to propagate..."
-          sleep 30
+          echo "Building Docker image"
+          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG" ./testapp
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG"
+          echo "Docker image: $ECR_IMAGE_TAG pushed to ECR"
+          echo "$ECR_REGISTRY/$ECR_REPOSITORY:$ECR_IMAGE_TAG"
 
-      - name: Verify assumed role identity
-        run: aws sts get-caller-identity
-
-      - name: Update kubeconfig (requires AWS creds)
+      - name: Scan Docker image
+        uses: aquasecurity/trivy-action@master
+        with:
+            image-ref: ${{ steps.login-ecr.outputs.registry }}/secure-app:${{ github.sha }}-${{ github.run_number }}
+      
+      - name: Wait for EKS access to propagate
         run: |
-          aws eks update-kubeconfig \
+          echo "Sleeping for 60 seconds to allow EKS IAM access policy to propagate..."
+          sleep 60
+      - name: Update kubeconfig
+        run: |
+          aws eks --region us-east-1 update-kubeconfig --name secure_cluster
+
+      - name: Wait until GitHub Actions role access is ACTIVE
+        run: |
+          echo "Waiting for GitHub Actions IAM access entry to become ACTIVE..."
+          for i in {1..30}; do
+            status=$(aws eks get-access-entry \
+              --cluster-name secure_cluster \
+            --principal-arn arn:aws:iam::831274730062:role/github-actions-role \
             --region us-east-1 \
-            --name secure_cluster
+            --query 'accessEntry.status' --output text 2>/dev/null)
 
-      - name: Clear AWS credentials to force OIDC
+            echo "Current access status: $status"
+
+            if [ "$status" = "ACTIVE" ]; then
+              echo "Access entry is ACTIVE."
+              break
+            fi
+            echo "Still not active. Waiting 10s..."
+            sleep 10
+          done
+
+    
+      - name: Who am I?
         run: |
-          echo "Clearing AWS credentials to test OIDC-based kubectl..."
-          unset AWS_ACCESS_KEY_ID
-          unset AWS_SECRET_ACCESS_KEY
-          unset AWS_SESSION_TOKEN
+          kubectl config view --minify -o jsonpath='{.users[0].user.exec.args}'
+          aws sts get-caller-identity 
 
-      - name: Who am I according to kubectl (OIDC)
+      - name: Install helm
         run: |
-          kubectl config view --minify
-          kubectl config current-context
-          aws sts get-caller-identity
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      
+      
+      - name: Verify access to EKS
+        run: |
+          echo "Checking cluster node access..."
+          kubectl get nodes
+      
+      - name: Deploy to EKS 
+        run: |
+          helm upgrade --install secure-app ./myapp-helm-chart --namespace default 
 
-      - name: Test kubectl access
-        run: kubectl get nodes
+      - name: Verify deployment
+        run: |
+          echo "Verifying deployment"
+          kubectl get pods --namespace default
+          kubectl get svc   
+          kubectl get deployments
+          kubectl get nodes
+        
+      - name: Running kube-bench
+        run: |
+            echo "Running kube-bench"
+            curl -LJO http:https://github.com/aquasecurity/kube-bench/releases/download/v0.6.18/kube-bench_0.6.18_linux_amd64.tar.gz
+            tar -xvf kube-bench_0.6.18_linux_amd64.tar.gz
+            chmod +x kube-bench
+            ./kube-bench --version
+            ./kube-bench --benchmark eks 
          
       
 
