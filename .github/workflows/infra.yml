@@ -58,7 +58,6 @@ jobs:
           terraform plan -no-color -out=tfplan -input=false \
             -var='public_access_cidrs=["0.0.0.0/0"]' \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
-            -var="enable_k8s_resources=false" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
       
       - name: Terraform Apply (Phase 1 - Infra Only)
@@ -67,7 +66,6 @@ jobs:
           terraform apply -auto-approve -input=false \
             -var='public_access_cidrs=["0.0.0.0/0"]' \
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
-            -var="enable_k8s_resources=false" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
       
       - name: Debug Access Policy Association
@@ -91,19 +89,19 @@ jobs:
               --region us-east-1 \
               --query "associatedAccessPolicies[?accessPolicyArn=='$POLICY_ARN'] | length(@)" \
               --output text 2>/dev/null || echo "NotFound")
-      
+
             echo "Found attached policy count: $attached"
-      
+
             if [[ "$attached" == "1" ]]; then
               echo "Policy is attached and ready."
               break
             fi
-      
+
             if [ "$i" -eq 60 ]; then
               echo "Timed out waiting for policy to attach."
               exit 1
             fi
-      
+
             sleep 10
           done
 
@@ -120,16 +118,6 @@ jobs:
         run: |
           aws eks --region us-east-1 update-kubeconfig --name secure_cluster
         
-      - name: Terraform Apply (Phase 2 - Apply with Import Flag)
-        if: github.event_name != 'pull_request'
-        run: |
-          terraform apply -auto-approve -input=false \
-            -var='public_access_cidrs=["0.0.0.0/0"]' \
-            -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
-            -var="enable_k8s_resources=true" \
-            -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
-
-     
       - name: Github SHA
         if: github.event_name != 'pull_request'
         run: echo "${GITHUB_SHA}" > commit_sha.txt
