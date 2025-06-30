@@ -81,7 +81,7 @@ jobs:
       
       - name: Deploy to EKS 
         run: |
-          helm upgrade --install secure-app ./myapp-helm-chart --namespace default --create-namespace
+          helm upgrade --install secure-app ./testapp-helm-chart --namespace default --create-namespace
 
       - name: Verify deployment
         run: |
