@@ -84,7 +84,7 @@ resource "aws_eks_access_policy_association" "gha_admin" {
 
   depends_on = [
     aws_eks_access_entry.gha_access,
-    aws_eks_cluster.secure_cluster,  # Force wait until cluster is stable
+    aws_eks_cluster.secure_cluster,             # Force wait until cluster is stable
     aws_eks_node_group.secure_devops_node_group # Also wait on nodes
   ]
 }
