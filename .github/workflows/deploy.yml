@@ -82,7 +82,7 @@ jobs:
       - name: Deploy to EKS 
         run: | 
           echo "Deploying via Helm"
-          helm upgrade --install secure-app ./testapp-helm-chart \
+          helm upgrade --install secure-app ./testapp/testapp-helm-chart \
             --namespace default \
             --create-namespace \
             --set image.respository=831274730062.dkr.ecr.us-east-1.amazonaws.com/secure-app \
