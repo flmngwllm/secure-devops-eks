@@ -80,8 +80,13 @@ jobs:
           kubectl get nodes
       
       - name: Deploy to EKS 
-        run: |
-          helm upgrade --install secure-app ./testapp-helm-chart --namespace default --create-namespace
+        run: | 
+          echo "Deploying via Helm"
+          helm upgrade --install secure-app ./testapp-helm-chart \
+            --namespace default \
+            --create-namespace \
+            --set image.respository=831274730062.dkr.ecr.us-east-1.amazonaws.com/secure-app \
+            --set image.tag=${{ github.sha }}-${{ github.run_number }}
 
       - name: Verify deployment
         run: |
