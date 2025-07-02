@@ -73,26 +73,31 @@ resource "aws_iam_role_policy_attachment" "secure_nodes_ssm" {
 
 data "aws_iam_policy_document" "alb_controller_trust" {
   statement {
-    actions = ["sts:AssumeRole"]
+    actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
-      type        = "ServiceAccount"
-      identifiers = ["eks.amazonaws.com"]
+      type        = "Federated"
+      identifiers = [aws_iam_openid_connect_provider.github_actions.arn]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_iam_openid_connect_provider.github_actions.url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:kube-system:aws-alb-controller"]
     }
   }
 }
 
 resource "aws_iam_role" "secure_devops_alb_controller_role" {
-  name               = "secure_devops_eks_cluster_role"
+  name               = "secure_devops_alb_controller_role"
   assume_role_policy = data.aws_iam_policy_document.alb_controller_trust.json
   tags = {
-    Name        = "secure_devops_eks_cluster_role"
+    Name        = "secure_devops_alb_controller_role"
     Environment = "prod"
     ManagedBy   = "Terraform"
   }
 }
 
 resource "aws_iam_policy" "secure_devops_alb_controller_policy" {
-  name   = "secure_devops_eks_cluster_role"
+  name   = "secure_devops_alb_controller_policy"
   policy = file("${path.module}/policy/aws-alb-policy.json")
 
 }

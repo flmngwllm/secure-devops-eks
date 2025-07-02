@@ -187,6 +187,7 @@ resource "aws_iam_role_policy" "github_actions_policy" {
       {
         Action = [
           "iam:AttachRolePolicy",
+          "iam:CreatePolicy",
           "iam:PutRolePolicy",
           "iam:DeleteRolePolicy"
         ],
