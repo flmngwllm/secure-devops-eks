@@ -82,7 +82,7 @@ data "aws_iam_policy_document" "alb_controller_trust" {
 }
 
 resource "aws_iam_role" "secure_devops_alb_controller_role" {
-  name = "secure_devops_eks_cluster_role"
+  name               = "secure_devops_eks_cluster_role"
   assume_role_policy = data.aws_iam_policy_document.alb_controller_trust.json
   tags = {
     Name        = "secure_devops_eks_cluster_role"
@@ -92,9 +92,9 @@ resource "aws_iam_role" "secure_devops_alb_controller_role" {
 }
 
 resource "aws_iam_policy" "secure_devops_alb_controller_policy" {
-  name = "secure_devops_eks_cluster_role"
+  name   = "secure_devops_eks_cluster_role"
   policy = file("${path.module}/policy/aws-alb-policy.json")
-  
+
 }
 
 resource "aws_iam_role_policy_attachment" "secure_devops_eks_alb_attachment" {
