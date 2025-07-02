@@ -76,11 +76,11 @@ data "aws_iam_policy_document" "alb_controller_trust" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
       type        = "Federated"
-      identifiers = [aws_iam_openid_connect_provider.github_actions.arn]
+      identifiers = [aws_iam_openid_connect_provider.github.arn]
     }
     condition {
       test     = "StringEquals"
-      variable = "${replace(aws_iam_openid_connect_provider.github_actions.url, "https://", "")}:sub"
+      variable = "${replace(aws_iam_openid_connect_provider.github.url, "https://", "")}:sub"
       values   = ["system:serviceaccount:kube-system:aws-alb-controller"]
     }
   }
