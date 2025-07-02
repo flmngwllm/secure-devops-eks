@@ -2,6 +2,16 @@ provider "aws" {
   region = "us-east-1"
 }
 
+terraform {
+  backend "s3" {
+    bucket         = "secure-devops-terraform-state"
+    key            = "bootstrap/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "secure-devops-terraform-locks"
+    encrypt        = true
+  }
+}
+
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "secure-devops-terraform-state"
 

@@ -43,6 +43,15 @@ data "aws_eks_cluster" "secure_cluster" {
   name = aws_eks_cluster.secure_cluster.name
 }
 
+data "terraform_remote_state" "bootstrap" {
+  backend = "s3"
+  config = {
+    bucket = "secure-devops-terraform-state"
+    key    = "bootstrap/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
 # data "aws_eks_cluster_auth" "cluster" {
 #   name = aws_eks_cluster.secure_cluster.name
 # }
