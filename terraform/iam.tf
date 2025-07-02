@@ -98,7 +98,7 @@ resource "aws_iam_role" "secure_devops_alb_controller_role" {
 
 resource "aws_iam_policy" "secure_devops_alb_controller_policy" {
   name   = "secure_devops_alb_controller_policy"
-  policy = file("${path.module}/policy/aws-alb-policy.json")
+  policy = file("${path.module}/policy/aws_alb_policy.json")
 
 }
 
