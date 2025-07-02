@@ -34,3 +34,12 @@
 #   }
 # }
 
+resource "kubernetes_service_account" "secure_devops_alb_service_account" {
+  metadata {
+    name      = "aws-alb-controller"
+    namespace = "kube-system"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = aws_iam_role.secure_devops_alb_controller_role.arn
+    }
+  }
+}

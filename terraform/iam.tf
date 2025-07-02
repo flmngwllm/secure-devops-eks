@@ -69,3 +69,38 @@ resource "aws_iam_role_policy_attachment" "secure_nodes_ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   role       = aws_iam_role.secure_devops_node_group_role.name
 }
+
+
+data "aws_iam_policy_document" "alb_controller_trust" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "ServiceAccount"
+      identifiers = ["eks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "secure_devops_alb_controller_role" {
+  name = "secure_devops_eks_cluster_role"
+  assume_role_policy = data.aws_iam_policy_document.alb_controller_trust.json
+  tags = {
+    Name        = "secure_devops_eks_cluster_role"
+    Environment = "prod"
+    ManagedBy   = "Terraform"
+  }
+}
+
+resource "aws_iam_policy" "secure_devops_alb_controller_policy" {
+  name = "secure_devops_eks_cluster_role"
+  policy = file("${path.module}/policy/aws-alb-policy.json")
+  
+}
+
+resource "aws_iam_role_policy_attachment" "secure_devops_eks_alb_attachment" {
+  policy_arn = aws_iam_policy.secure_devops_alb_controller_policy.arn
+  role       = aws_iam_role.secure_devops_alb_controller_role.arn
+}
+
+
+

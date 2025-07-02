@@ -26,4 +26,3 @@ output "ecr_repository_url" {
 output "gha_admin_policy_arn" {
   value = aws_eks_access_policy_association.gha_admin.policy_arn
 }
-

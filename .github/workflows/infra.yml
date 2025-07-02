@@ -25,6 +25,8 @@ permissions:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    outputs:
+      vpc_id: ${{ steps.tf-output.outputs.vpc_id }}
     defaults:
       run:
         shell: bash
@@ -60,7 +62,7 @@ jobs:
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
       
-      - name: Terraform Apply (Phase 1 - Infra Only)
+      - name: Terraform Apply 
         if: github.event_name != 'pull_request'
         run: |
           terraform apply -auto-approve -input=false \
@@ -68,6 +70,13 @@ jobs:
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
       
+      - name: Output VPC ID
+        id: tf-output
+        run: |
+          VPC_ID=$(terraform output -raw vpc_id)
+          echo "vpc_id=$VPC_ID" >> $GITHUB_OUTPUT
+        working-directory: ./terraform
+
       - name: Test cluster access
         run: |
           echo "Testing if assumed GitHub Actions role can access EKS..."
