@@ -78,6 +78,17 @@ jobs:
         run: |
           helm repo add eks https://aws.github.io/eks-charts
           helm repo update
+      - name: Download VPC ID artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vpc-id
+          path: ./artifacts
+
+      - name: Read VPC ID into environment variable
+        id: vpc
+        run: |
+          VPC_ID=$(cat ./artifacts/vpc_id.txt)
+          echo "vpc_id=$VPC_ID" >> $GITHUB_OUTPUT
 
       - name: Deploy ALB Controller
         run: |

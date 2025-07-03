@@ -70,12 +70,15 @@ jobs:
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
       
-      - name: Output VPC ID
-        id: tf-output
+      - name: Save VPC ID to file
         run: |
-          VPC_ID=$(terraform output -raw vpc_id)
-          echo "vpc_id=$VPC_ID" >> $GITHUB_OUTPUT
-        working-directory: ./terraform
+          terraform output -raw vpc_id > vpc_id.txt
+
+      - name: Upload VPC ID artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpc-id
+          path: vpc_id.txt
 
       - name: Test cluster access
         run: |
