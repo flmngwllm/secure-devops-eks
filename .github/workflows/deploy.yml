@@ -77,11 +77,13 @@ jobs:
         run: |
           helm repo add eks https://aws.github.io/eks-charts
           helm repo update
+
       - name: Download VPC ID artifact
         uses: actions/download-artifact@v4
         with:
           name: vpc-id
           path: ./artifacts
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Read VPC ID into environment variable
         id: vpc
@@ -96,7 +98,7 @@ jobs:
             --create-namespace \
             --set clusterName=secure_cluster \
             --set region=us-east-1 \
-            --set vpcID=${{ needs.terraform.outputs.vpc_id }} \
+            --set vpcID=${{ steps.vpc.outputs.vpc_id }} \
             --set serviceAccount.create=false \
             --set serviceAccount.name=aws-alb-controller \
             --set image.tag="v2.7.1"
