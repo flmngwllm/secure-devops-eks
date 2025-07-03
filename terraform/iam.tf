@@ -103,7 +103,7 @@ resource "aws_iam_policy" "secure_devops_alb_controller_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "secure_devops_eks_alb_attachment" {
-  policy_arn = aws_iam_policy.secure_devops_alb_controller_policy.arn
+  policy_arn = aws_iam_policy.secure_devops_alb_controller_policy.name
   role       = aws_iam_role.secure_devops_alb_controller_role.arn
 }
 
