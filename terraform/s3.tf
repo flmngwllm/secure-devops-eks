@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "sercure_devops_ci_artifacts" {
-  bucket        = "secure-devops-artifacts-${random_id.suffix.hex}"
+  bucket        = "secure-devops-artifacts"
   force_destroy = true
 
   tags = {
@@ -7,9 +7,6 @@ resource "aws_s3_bucket" "sercure_devops_ci_artifacts" {
   }
 }
 
-resource "random_id" "suffix" {
-  byte_length = 4
-}
 
 resource "aws_s3_bucket_policy" "sercure_devops_ci_artifacts_policy" {
   bucket = aws_s3_bucket.sercure_devops_ci_artifacts.id
@@ -22,8 +19,20 @@ resource "aws_s3_bucket_policy" "sercure_devops_ci_artifacts_policy" {
         Principal = {
           AWS = "arn:aws:iam::831274730062:role/github-actions-role"
         },
-        Action   = ["s3:GetObject", "s3:PutObject", "s3:CreateBucket"],
+        Action   = ["s3:CreateBucket", "s3:GetObject", "s3:PutObject", "s3:ListBucket"],
         Resource = "${aws_s3_bucket.sercure_devops_ci_artifacts.arn}/*"
+      },
+      {
+        Sid    = "AllowBucketOperations",
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::831274730062:role/github-actions-role"
+        },
+        Action = [
+          "s3:ListBucket",
+          "s3:CreateBucket"
+        ],
+        Resource = "${aws_s3_bucket.sercure_devops_ci_artifacts.arn}"
       }
     ]
   })
