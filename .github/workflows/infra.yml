@@ -75,11 +75,9 @@ jobs:
           terraform output -raw vpc_id > vpc_id.txt
         working-directory: ./terraform
 
-      - name: Upload VPC ID artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: vpc-id
-          path: ./terraform/vpc_id.txt
+      - name: Upload VPC ID to S3
+        run: |
+          aws s3 cp ./terraform/vpc_id.txt s3://secure-devops-artifacts/vpc_id.txt
         
 
       - name: Test cluster access

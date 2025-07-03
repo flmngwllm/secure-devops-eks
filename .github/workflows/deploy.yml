@@ -5,10 +5,7 @@ on:
     types:
       - completed
   workflow_dispatch:
-    inputs:
-      vpc_id:
-        description: "VPC ID (used only if artifact not available)"
-        required: false
+
 permissions:
   id-token: write
   contents: read
@@ -19,8 +16,6 @@ jobs:
     defaults:
       run:
         shell: bash
-    env:
-      FALLBACK_VPC_ID: ${{ inputs.vpc_id }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -84,28 +79,13 @@ jobs:
           helm repo update
 
       - name: Download VPC ID artifact
-        if: github.event_name == 'workflow_run'
-        id: artifact-download
-        continue-on-error: true
-        uses: actions/download-artifact@v4
-        with:
-          name: vpc-id
-          path: ./artifacts
-          run-id: ${{ github.event.workflow_run.id }}
+        run: |
+          aws s3 cp s3://secure-devops-artifacts/vpc_id.txt ./artifacts/vpc_id.txt
 
       - name: Read VPC ID into environment variable
         id: vpc
         run: |
-          if [[ -f "./artifacts/vpc_id.txt" ]]; then
-            VPC_ID=$(cat ./artifacts/vpc_id.txt)
-            echo "Using VPC ID from artifact: $VPC_ID"
-          elif [[ -n "${FALLBACK_VPC_ID}" ]]; then
-            VPC_ID="${FALLBACK_VPC_ID}"
-            echo "Using fallback VPC ID: $VPC_ID"
-          else
-            echo "VPC ID not found in artifact or input. Failing."
-            exit 1
-          fi
+          VPC_ID=$(cat ./artifacts/vpc_id.txt)
           echo "vpc_id=$VPC_ID" >> $GITHUB_OUTPUT
 
       - name: Deploy ALB Controller
