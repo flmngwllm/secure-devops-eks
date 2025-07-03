@@ -73,7 +73,7 @@ jobs:
       - name: Save VPC ID to file
         run: |
           terraform output -raw vpc_id > vpc_id.txt
-          working-directory: ./terraform
+        working-directory: ./terraform
 
       - name: Upload VPC ID artifact
         uses: actions/upload-artifact@v4
