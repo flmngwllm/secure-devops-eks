@@ -22,7 +22,7 @@ resource "aws_s3_bucket_policy" "sercure_devops_ci_artifacts_policy" {
         Principal = {
           AWS = "arn:aws:iam::831274730062:role/github-actions-role"
         },
-        Action   = ["s3:GetObject", "s3:PutObject"],
+        Action   = ["s3:GetObject", "s3:PutObject", "s3:CreateBucket"],
         Resource = "${aws_s3_bucket.sercure_devops_ci_artifacts.arn}/*"
       }
     ]

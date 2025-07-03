@@ -213,6 +213,7 @@ resource "aws_iam_role_policy" "github_actions_policy" {
         "Action": [
           "s3:PutObject",
           "s3:GetObject",
+          "s3:CreateBucket"
         ],
         "Resource": "arn:aws:s3:::secure-devops-artifacts/vpc_id.txt"
 }
