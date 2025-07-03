@@ -12,7 +12,6 @@ permissions:
 
 jobs:
   deploy-app:
-    needs: terraform
     runs-on: ubuntu-latest
     defaults:
       run:
