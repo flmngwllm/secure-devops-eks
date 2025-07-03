@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   deploy-app:
+    needs: terraform
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -85,7 +86,7 @@ jobs:
             --create-namespace \
             --set clusterName=secure_cluster \
             --set region=us-east-1 \
-            --set vpcID=${{ steps.tf-output.outputs.vpc_id }} \
+            --set vpcID=${{ needs.terraform.outputs.vpc_id }} \
             --set serviceAccount.create=false \
             --set serviceAccount.name=aws-alb-controller \
             --set image.tag="v2.7.1"
