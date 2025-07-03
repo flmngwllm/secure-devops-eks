@@ -70,6 +70,11 @@ jobs:
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
       
+      - name: Export S3 bucket name
+        id: tf-output
+        run: |
+          echo "ci_bucket_name=$(terraform output -raw ci_artifacts_bucket_name)" >> $GITHUB_OUTPUT
+          
       - name: Save VPC ID to file
         run: |
           terraform output -raw vpc_id > vpc_id.txt
