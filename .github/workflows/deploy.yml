@@ -102,7 +102,10 @@ jobs:
             --set serviceAccount.create=false \
             --set serviceAccount.name=aws-alb-controller \
             --set image.tag="v2.7.1"
-            
+
+      - name: Sleep for ALB readiness
+        run: sleep 60
+             
       - name: Wait for ALB controller webhook to be ready
         run: |
           echo "Waiting for ALB controller to be ready..."
