@@ -42,4 +42,10 @@ resource "kubernetes_service_account" "secure_devops_alb_service_account" {
       "eks.amazonaws.com/role-arn" = aws_iam_role.secure_devops_alb_controller_role.arn
     }
   }
+
+  automount_service_account_token = true
+  
+  depends_on = [
+    time_sleep.delay_for_access_entry
+  ]
 }
