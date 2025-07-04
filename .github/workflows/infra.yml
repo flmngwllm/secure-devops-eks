@@ -71,6 +71,9 @@ jobs:
             -var="github_actions_role_arn=${ACTIONS_ROLE_ARN}" \
             -var="ssh_key_name=${SSH_KEY_NAME}" || exit 1
       
+      - name: Save VPC ID to file
+        run: terraform output -raw vpc_id > vpc_id.txt
+        
       - name: Upload VPC ID to S3
         run: |
           aws s3 cp ./terraform/vpc_id.txt s3://${{ secrets.CI_BUCKET_NAME }}/vpc_id.txt
