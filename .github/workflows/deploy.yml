@@ -102,7 +102,14 @@ jobs:
             --set serviceAccount.create=false \
             --set serviceAccount.name=aws-alb-controller \
             --set image.tag="v2.7.1"
-          
+            
+      - name: Wait for ALB controller webhook to be ready
+        run: |
+          echo "Waiting for ALB controller to be ready..."
+          kubectl rollout status deployment aws-load-balancer-controller -n kube-system
+          echo "Checking webhook endpoints..."
+          kubectl get endpoints -n kube-system aws-load-balancer-webhook-service   
+
       - name: Verify access to EKS
         run: |
           echo "Checking cluster node access..."
