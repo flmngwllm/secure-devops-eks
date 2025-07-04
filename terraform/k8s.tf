@@ -44,7 +44,7 @@ resource "kubernetes_service_account" "secure_devops_alb_service_account" {
   }
 
   automount_service_account_token = true
-  
+
   depends_on = [
     time_sleep.delay_for_access_entry
   ]
