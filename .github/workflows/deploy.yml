@@ -98,7 +98,7 @@ jobs:
             --create-namespace \
             --set clusterName=secure_cluster \
             --set region=us-east-1 \
-            --set vpcID=${{ steps.vpc.outputs.vpc_id }} \
+            --set vpcId=${{ steps.vpc.outputs.vpc_id }} \
             --set serviceAccount.create=false \
             --set serviceAccount.name=aws-alb-controller \
             --set image.tag="v2.7.1"
