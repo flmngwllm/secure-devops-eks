@@ -73,10 +73,10 @@ jobs:
       
       - name: Save VPC ID to file
         run: terraform output -raw vpc_id > vpc_id.txt
-        
+
       - name: Upload VPC ID to S3
         run: |
-          aws s3 cp ./terraform/vpc_id.txt s3://${{ secrets.CI_BUCKET_NAME }}/vpc_id.txt
+          aws s3 cp vpc_id.txt s3://${{ secrets.CI_BUCKET_NAME }}/vpc_id.txt
         
       - name: Test cluster access
         run: |
