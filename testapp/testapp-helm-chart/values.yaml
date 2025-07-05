@@ -52,7 +52,7 @@ ingress:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     alb.ingress.kubernetes.io/healthcheck-path: /
   hosts:
-    - host: secure-app.local
+    #- host: 
       paths:
         - path: /
           pathType: Prefix
