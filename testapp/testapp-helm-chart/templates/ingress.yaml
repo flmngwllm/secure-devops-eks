@@ -37,17 +37,9 @@ spec:
     {{- end }}
   {{- end }}
 
-  {{- $validHosts := false }}
-  {{- range .Values.ingress.hosts }}
-    {{- if .host }}
-      {{- $validHosts = true }}
-    {{- end }}
-  {{- end }}
-  {{- if $validHosts }}
   rules:
     {{- range .Values.ingress.hosts }}
-    {{- if .host }}
-    - host: {{ .host | quote }}
+    - {{- if .host }}host: {{ .host | quote }}{{- end }}
       http:
         paths:
           {{- range .paths }}
@@ -66,7 +58,5 @@ spec:
               servicePort: {{ $svcPort }}
               {{- end }}
           {{- end }}
-    {{- end }}
-    {{- end }}
-  {{- end }}
+    {{- end }} 
 {{- end }}
