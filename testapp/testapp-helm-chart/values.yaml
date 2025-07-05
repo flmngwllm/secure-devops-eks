@@ -52,8 +52,7 @@ ingress:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     alb.ingress.kubernetes.io/healthcheck-path: /
   hosts:
-    #- host: 
-      paths:
+    - paths:
         - path: /
           pathType: Prefix
   tls: []
