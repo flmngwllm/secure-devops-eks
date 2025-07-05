@@ -36,8 +36,17 @@ spec:
       secretName: {{ .secretName }}
     {{- end }}
   {{- end }}
+
+  {{- $validHosts := false }}
+  {{- range .Values.ingress.hosts }}
+    {{- if .host }}
+      {{- $validHosts = true }}
+    {{- end }}
+  {{- end }}
+  {{- if $validHosts }}
   rules:
     {{- range .Values.ingress.hosts }}
+    {{- if .host }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -58,4 +67,6 @@ spec:
               {{- end }}
           {{- end }}
     {{- end }}
+    {{- end }}
+  {{- end }}
 {{- end }}
