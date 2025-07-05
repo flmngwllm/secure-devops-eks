@@ -194,7 +194,8 @@ resource "aws_iam_role_policy" "github_actions_policy" {
           "iam:DeletePolicyVersion",
           "iam:GetPolicy",
           "iam:GetPolicyVersion",
-          "iam:ListPolicyVersions"
+          "iam:ListPolicyVersions",
+          "iam:CreateOpenIDConnectProvider"
         ],
         Effect   = "Allow",
         Resource = "*"

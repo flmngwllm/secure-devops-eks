@@ -76,11 +76,11 @@ data "aws_iam_policy_document" "alb_controller_trust" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
       type        = "Federated"
-      identifiers = [data.terraform_remote_state.bootstrap.outputs.github_oidc_provider_arn]
+      identifiers = [aws_iam_openid_connect_provider.eks_oidc.arn]
     }
     condition {
       test     = "StringEquals"
-      variable = "${replace(data.terraform_remote_state.bootstrap.outputs.github_oidc_provider_url, "https://", "")}:sub"
+      variable = "${replace(aws_iam_openid_connect_provider.eks_oidc.url, "https://", "")}:sub"
       values   = ["system:serviceaccount:kube-system:aws-alb-controller"]
     }
   }
