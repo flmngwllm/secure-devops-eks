@@ -105,7 +105,7 @@ jobs:
 
       - name: Sleep for ALB readiness
         run: sleep 60
-             
+
       - name: Wait for ALB controller webhook to be ready
         run: |
           echo "Waiting for ALB controller to be ready..."
@@ -134,7 +134,11 @@ jobs:
           kubectl get svc   
           kubectl get deployments
           kubectl get nodes
-        
+      
+      - name: Update kubeconfig
+        run: |
+          aws eks --region us-east-1 update-kubeconfig --name secure_cluster
+          
       - name: Running kube-bench
         run: |
             echo "Running kube-bench"
