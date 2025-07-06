@@ -48,7 +48,12 @@ A secure, automated deployment pipeline for containerized applications using:
 ---
 
 ## 📦 Project Structure
-<pre><code>```text ├── backend/ # Terraform bootstrap for S3 + OIDC ├── terraform/ # Main Terraform EKS infrastructure ├── testapp/ # Sample Node.js app with Helm chart ├── .github/workflows/ # CI/CD workflows ``` </code></pre>
+```text
+├── backend/              # Terraform bootstrap for S3 + OIDC
+├── terraform/            # Main Terraform EKS infrastructure
+├── testapp/              # Sample Node.js app with Helm chart
+├── .github/workflows/    # CI/CD workflows
+```
 
 ## 🧪 How It Works
 
