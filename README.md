@@ -27,10 +27,15 @@ A secure, automated deployment pipeline for containerized applications using:
 - ALB Ingress Controller for public app access
 - S3 + DynamoDB backend for Terraform state
 
-### 🔹 CI/CD Pipeline
+### 🔹 CI/CD Pipeline with GitHub Actions
 
 - `infra.yml`: Deploys infrastructure using Terraform
 - `deploy.yml`: Builds and pushes Docker image, deploys to EKS with Helm
+
+### 🔹 Helm-based app deployment
+
+- Manages service, deployment, probes, ingress  
+- Uses `aws-load-balancer-controller` with ALB 
 
 ### 🔹 Security
 
@@ -43,10 +48,7 @@ A secure, automated deployment pipeline for containerized applications using:
 ---
 
 ## 📦 Project Structure
-├── backend/ # Terraform bootstrap for S3 + OIDC
-├── terraform/ # Main Terraform EKS infrastructure
-├── testapp/ # Sample Node.js app with Helm chart
-├── .github/workflows/ # CI/CD workflows
+<pre><code>``` ├── backend/ # Terraform bootstrap for S3 + OIDC ├── terraform/ # Main Terraform EKS infrastructure ├── testapp/ # Sample Node.js app with Helm chart ├── .github/workflows/ # CI/CD workflows ```</code></pre>
 
 ## 🧪 How It Works
 
@@ -77,7 +79,3 @@ Once deployed, the app is publicly accessible via the ALB Ingress URL provisione
 > ⚠️ This project is tied to a personal AWS account. Infrastructure provisioning is intended for demonstration and learning purposes only. Forking this repo will require adjustments to use your own AWS resources, credentials, and configuration.
 
 ---
-
-## 📄 License
-
-MIT
