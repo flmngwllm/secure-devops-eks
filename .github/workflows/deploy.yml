@@ -117,7 +117,19 @@ jobs:
         run: |
           echo "Checking cluster node access..."
           kubectl get nodes
+          
+      - name: Add prometheus Helm repositoty
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
       
+      - name: Deploy Prometheus 
+        run: |
+          helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+            --namespace monitoring \
+            --create-namespace \
+            -f monitoring/monitoring-values.yaml \
+
       - name: Deploy to EKS 
         run: | 
           echo "Deploying via Helm"
@@ -149,5 +161,6 @@ jobs:
             ./kube-bench --benchmark eks 
          
       
+
 
       
