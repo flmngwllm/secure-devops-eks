@@ -1,0 +1,18 @@
+grafana:
+  adminPassword: "${GRAFANA_ADMIN_PASS}" 
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      alb.ingress.kubernetes.io/healthcheck-path: /
+    ingressClassName: alb
+    path: /
+    pathType: Prefix
+    hosts: [] 
+prometheus:
+  service:
+    type: ClusterIP

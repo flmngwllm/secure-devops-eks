@@ -117,18 +117,22 @@ jobs:
         run: |
           echo "Checking cluster node access..."
           kubectl get nodes
-          
+
       - name: Add prometheus Helm repositoty
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
       
       - name: Deploy Prometheus 
+        env:
+          GRAFANA_ADMIN_PASS: ${{ secrets.GRAFANA_ADMIN_PASS }}
         run: |
+          envsubst < monitoring/monitoring-values.yaml > monitoring/temp-values.yaml 
+
           helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
             --namespace monitoring \
             --create-namespace \
-            -f monitoring/monitoring-values.yaml \
+            -f monitoring/temp-values.yaml \
 
       - name: Deploy to EKS 
         run: | 
@@ -136,7 +140,7 @@ jobs:
           helm upgrade --install secure-app ./testapp/testapp-helm-chart \
             --namespace default \
             --create-namespace \
-            --set image.respository=831274730062.dkr.ecr.us-east-1.amazonaws.com/secure-app \
+            --set image.repository=831274730062.dkr.ecr.us-east-1.amazonaws.com/secure-app \
             --set image.tag=${{ github.sha }}-${{ github.run_number }}
 
       - name: Verify deployment
