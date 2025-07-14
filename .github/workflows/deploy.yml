@@ -127,7 +127,8 @@ jobs:
         env:
           GRAFANA_ADMIN_PASS: ${{ secrets.GRAFANA_ADMIN_PASS }}
         run: |
-          envsubst < monitoring/monitoring-values.yaml > monitoring/temp-values.yaml 
+          export GRAFANA_ADMIN_PASS="$GRAFANA_ADMIN_PASS"
+          envsubst '${GRAFANA_ADMIN_PASS}' < monitoring/monitoring-values.yaml > monitoring/temp-values.yaml
 
           helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
             --namespace monitoring \

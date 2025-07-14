@@ -1,5 +1,5 @@
 grafana:
-  adminPassword: "${GRAFANA_ADMIN_PASS}" 
+  adminPassword: "${GRAFANA_ADMIN_PASS}"
   service:
     type: ClusterIP
   ingress:
@@ -9,8 +9,9 @@ grafana:
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
       alb.ingress.kubernetes.io/healthcheck-path: /
+      alb.ingress.kubernetes.io/group.name: "secure-apps"
     ingressClassName: alb
-    path: /
+    path: /grafana
     pathType: Prefix
     hosts: [] 
 prometheus:
