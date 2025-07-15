@@ -21,7 +21,7 @@ A secure, automated deployment pipeline for containerized applications using:
 
 ### 🔹 Infrastructure
 
-- VPC with public and private subnets
+- VPC with public and private subnet
 - EKS Cluster with managed node group
 - Secure IAM roles with GitHub OIDC integration
 - ALB Ingress Controller for public app access
